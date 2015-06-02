@@ -6,7 +6,7 @@ Inspired by anime sword art online.
 This is the first time for me to build a project, please feel free to give me your suggestion:D
 
 #Current Major Task:
--Core Battle Code Debug
+-Core Battle Code Building
 
 -Sword Skill Making
 
