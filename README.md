@@ -1,5 +1,5 @@
-# Game-Sword-Art-Offline-as-2D
-Project of Sword Art Offline as 2D
+# Game-Sword-Art-Offline
+Project of Sword Art Offline
 
 Inspired by anime sword art online.
 
