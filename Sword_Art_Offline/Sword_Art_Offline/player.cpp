@@ -1,45 +1,136 @@
 #include "player.h"
 #include "enemy.h"
+#include "mainframe.h"
 #include "skilllist.h"
 
 __PLAYER::__PLAYER() {}
 
 __PLAYER::~__PLAYER() {}
 
-int kirito::getx()	     //获取位置
+int kirito::getX()	     //获取位置
 {
 	return x;
 }
 
-int kirito::gety()
+int kirito::getY()
 {
 	return y;
 }
 
-int kirito::getmovespd()//获取移动速度
+int kirito::getMovespd()//获取移动速度
 {
-	return movespeed;
+	return movespd;
 }
 	
-int kirito::getattack()        //获取攻击力
+int kirito::getAttack()        //获取攻击力
 {
 	return attack;
 }
 
-int kirito::gethp()            //获取当前hp
+int kirito::getHp()            //获取当前hp
 {
 	return hp;
 }
 
-int kirito::getskill()         //获取当前释放技能编号
-{
-	return skilltype;
-}
-
-int kirito::getcombo()         //获取当前连击值
+int kirito::getCombo()         //获取当前连击值
 {
 	return combo;
 }
+
+int kirito::getSkill()
+{
+	return skillType;
+}
+
+void kirito::jump()		    //跳跃
+{
+	switch (jumpState){
+	case 1:y -= 40,jumpState++; break;
+	case 2:y -= 30, jumpState++; break;
+	case 3:y -= 20, jumpState++; break;
+	case 4:y -= 10, jumpState++; break;
+	case 5:jumpState++; break;
+	case 6:y += 10, jumpState++; break;
+	case 7:y += 20, jumpState++; break;
+	case 8:y += 30, jumpState++; break;
+	case 9:y += 40, isJump = false,jumpState=0; break;
+	default:break;
+	}
+}
+
+void kirito::moveX(IMAGE player)		//基本移动 
+{
+	isRun = true;
+	if (runState <= 16)runState++;
+	switch (kirito::getDir()){
+	case 0:{
+		x -= kirito::getMovespd(); 
+		if (kirito::runState > 12)loadimage(&player, "pic/ll4.jpg");
+		else if (kirito::runState > 8)loadimage(&player, "pic/ll3.jpg");
+		else if (kirito::runState > 4)loadimage(&player, "pic/ll2.jpg");
+		else if (kirito::runState > 0)loadimage(&player, "pic/ll1.jpg");
+	}break;
+	case 1:{
+		x += getMovespd();
+		if (kirito::runState > 12)loadimage(&player, "pic/rr4.jpg");
+		else if (kirito::runState > 8)loadimage(&player, "pic/rr3.jpg");
+		else if (kirito::runState > 4)loadimage(&player, "pic/rr2.jpg");
+		else if (kirito::runState > 0)loadimage(&player, "pic/rr1.jpg");
+	}break;
+	}
+	if (runState = 17)runState = 1;
+}
+
+bool kirito::stillJudge()     //判断是否静止
+{
+	if (isRun || isJump || attacking)
+		return false;
+	else
+		return true;
+}
+
+bool kirito::jumpJudge()
+{
+	if (isJump)return true;
+	else return false;
+}
+
+void kirito::startJump()
+{
+	isJump = 1;
+	jumpState = 1;
+}
+
+void kirito::useSkill(int skillnum)
+{
+	switch (skillnum){
+	case 1:skillType = 1, skillState = 1, combo = 1; break;
+	default:break;
+	}
+}
+
+void kirito::still(bool dir, int x, int y, int ox, IMAGE player)
+{
+	switch (dir){
+	case 0:{
+		loadimage(&player, "pic/lstill.jpg");
+		mainFrame::M_putimg(x, y, &player, WHITE, 100, ox);
+	}break;
+	case 1:{
+		loadimage(&player, "pic/rstill.jpg");
+		mainFrame::M_putimg(x, y, &player, WHITE, 100, ox);
+	}break;
+	}
+}
+
+void kirito::meleeAttack()
+{
+	attacking = true;
+	//攻击判定
+	//输出技能图片
+}
+
+//初始化用函数
 
 void kirito::teleport(int x1, int y1)	//用于玩家传送
 {
@@ -47,40 +138,37 @@ void kirito::teleport(int x1, int y1)	//用于玩家传送
 	y = y1;
 }
 
-void kirito::jump(int state)		    //跳跃
+void kirito::setHp(int num)
 {
-	switch (state){
-	case 1:y -= 40, isJump = true; break;
-	case 2:y -= 30; break;
-	case 3:y -= 20; break;
-	case 4:y -= 10; break;
-	case 5:break;
-	case 6:y += 10; break;
-	case 7:y += 20; break;
-	case 8:y += 30; break;
-	case 9:y += 40, isJump = false;; break;
-	default:break;
-	}
+	hp = num;
 }
 
-void kirito::movex()		//基本移动 
+void kirito::setAttack(int num)
 {
-	switch (getdir()){
-	case 0:x -= getmovespd(); break;
-	case 1:x += getmovespd(); break;
-	}
+	attack = num;
 }
 
-void kirito::castskill(int skillnum)    //释放技能（技能编号）
+void kirito::setMaxHp(int num)
 {
-	if (__SKILLLIST::ableToCast(skillnum))
-		enemy::damage(getattack());
+	maxhp = num;
 }
-bool kirito::stilljudge()     //判断是否静止
+
+void kirito::setSpd(int num)
 {
-	if (isRun || isJump || attacking)
-		return false;
-	else
-		return true;
+	movespd = num;
 }
-bool lifejudge();       //存活确认
+
+void kirito::setDir(bool num)
+{
+	dir = num;
+}
+
+void kirito::setCombo(int num)
+{
+	combo = num;
+}
+
+void kirito::setSkillState(int num)
+{
+	skillState = num;
+}

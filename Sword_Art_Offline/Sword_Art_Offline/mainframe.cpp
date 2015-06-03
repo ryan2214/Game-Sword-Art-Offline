@@ -1,4 +1,5 @@
 #include "mainframe.h"
+#include "enemy.h"
 #pragma comment (lib, "winmm.lib")
 
 __MAINFRAME::__MAINFRAME() {}
@@ -11,6 +12,11 @@ __MAINFRAME::~__MAINFRAME() {}
 #define maxy 600
 #define inter 10        //初始化Sleep的间隔
 
+void main()
+{
+	__MAINFRAME mainFrame;
+	mainFrame.welcomeInit();
+}
 
 void headLine(char *SAO, char *ETS,char *blank,bool flagstart,bool blink)
 {
@@ -49,10 +55,32 @@ void copy_img(IMAGE* img1, IMAGE* img2)
 	SetWorkingImage(now_working);
 }
 
-void main()
+void M_clear(POINT pt, IMAGE *bk,IMAGE pic)//pt上一个动作图片的输出坐标，bk背景图片
 {
-	__MAINFRAME mainFrame;
-	mainFrame.welcomeInit();
+	IMAGE clear;
+	SetWorkingImage(bk);//设定当前的绘图设备为背景图片
+	getimage(&clear, pt.x, pt.y, pic.getwidth(), pic.getheight());//获取图像
+	SetWorkingImage();//设定回默认绘图窗口
+	putimage(pt.x, pt.y, &clear);//输出
+}
+
+int mainFrame::getOriginx()
+{
+	return originx;
+}
+
+void mainFrame::screenMove(int x,int spd)
+{
+	if (x > (500 - getOriginx())){              //右移动边界
+		setOriginx(getOriginx() - spd);              //屏幕区域位置改变
+	}
+	if (x < (120 - getOriginx())){              //左移动边界
+		setOriginx(getOriginx() + spd);
+	}
+
+	if (getOriginx() > 0)setOriginx(0);           //限制originx>=0
+	if (getOriginx() < -2144)setOriginx(- 2144);     //限制originx<=2144
+	setorigin(getOriginx(), 0);                 //重设原点
 }
 
 void mainFrame::welcomeInit()
@@ -145,9 +173,125 @@ void mainFrame::welcomeInit()
 	closegraph();
 }
 
+void mainFrame::dataInit()
+{
+	kirito.teleport(300,400);            //初始化kirito数据
+	kirito.setDir(1);
+	kirito.setMaxHp(100);
+	kirito.setHp(50);
+	kirito.setAttack(10);
+	kirito.setSpd(10);     //单位px
+	kirito.setSkillState(0);
+
+	enemy.teleport(500, 400);            //初始化enemy数据
+	enemy.setDir(0);
+	enemy.setMaxHp(100);
+	enemy.setHp(50);
+	enemy.setAttack(10);
+	enemy.setSpd(10);
+	enemy.setSkillState(0);
+}
+
 void mainFrame::unlimitedMode()
 {
+	IMAGE background, wbackground, welcome, player, skillpic250, skillpic300, enemyplayer, hpUI;
+	POINT pt;    //定义清理图像指针
+	int comboclear = 0;
+	
+	//link start!
+	//HWND hwnd = MCIWndCreate(GetHWnd(), NULL, WS_CHILD | WS_VISIBLE | MCIWNDF_NOMENU | MCIWNDF_NOPLAYBAR, NULL);
+	//MCIWndOpen(hwnd, "avi\\loadgame.wmv", NULL);
+	//MCIWndPlay(hwnd);
+	//Sleep(17000);
 
+		FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+
+		setorigin(originx, 0);//设置初始原点
+
+		// 加载图片
+		loadimage(&welcome, "pic/welcome.jpg");
+		loadimage(&background, "pic/blank.jpg");	// 请确保该图片是 1072*600 像素
+		loadimage(&hpUI, "pic/hp_bar.jpg");
+		loadimage(&wbackground, "pic/whitebk.jpg");
+
+		dataInit();//赋予角色属性值
+
+		pt.x = 0;   //清理图像指针赋值
+		pt.y = 0;
+
+		//随机BGM
+		int m = ((rand() % 7) + 1);
+		bgm(m);
+		BeginBatchDraw();  //开始批量绘图
+
+		while (1){      //**********************************游戏主循环******************************
+
+			//检测人物位置，移动屏幕
+			screenMove(kirito.getX(),kirito.getMovespd());
+
+			if (kirito.getHp() <= 0)kirito.teleport(0,600);  //死亡判定
+			if (enemy.getHp() <= 0)enemy.teleport(0,600);
+
+			//当有键盘输入时执行
+			if (_kbhit()){
+
+				if (KEY_DOWN('J') && (!kirito.stillJudge())){                 //普通攻击"J"
+					kirito.useSkill(1);
+				}
+
+				else{
+					if (KEY_DOWN(VK_SPACE) && (!kirito.stillJudge())){        //按Space跳跃
+						kirito.startJump();
+					}
+
+					                     
+					if (KEY_DOWN('A')){                                       //按A向左移动
+						kirito.setDir(0);
+						kirito.moveX(player);
+						}
+					if (KEY_DOWN('D')){                                       //按D向右移动
+						kirito.setDir(1);
+						kirito.moveX(player);
+						}
+					
+					if (KEY_DOWN(VK_ESCAPE)) closegraph();                    //ESC退出
+				}
+			}
+
+			if (kirito.jumpJudge()){    //若kirito处于跳跃状态，进行Y值改变
+				kirito.jump();
+			}
+			if (kirito.getSkill() > 0){
+				switch (kirito.getSkill()){
+				case 1:{
+					switch (kirito.getCombo()){
+					case 1:break;
+					}
+				}break;
+				}
+			}
+				
+            if (kirito.stillJudge()){                    //静止时
+				comboclear++;
+				if (comboclear == 20){
+					comboclear = 0;
+					kirito.setCombo(0);
+				}
+				kirito.still(kirito.getDir(), kirito.getX(), kirito.getY(), originx, player);   //静止角色图片
+			}
+			if (enemy.stillJudge()){
+				kirito.still(enemy.getDir(), enemy.getX(), enemy.getY(), originx, enemyplayer);
+			}
+
+			FlushBatchDraw();      //绘制结果输出
+			Sleep(inter);          //控制帧率
+			M_clear(pt, &background,background);    //清空画面
+
+
+		}//***************************************主循环结束*******************************************
+
+		closegraph();
+	
 }
 
 void mainFrame::bgm(int song)
@@ -221,7 +365,7 @@ void mainFrame::gameExit()
 	closegraph();
 }
 
-void mainFrame::my_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int tp, int originx)
+void mainFrame::M_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int tp, int originx)
 {
 	//排除颜色avoid_color,容差为deviation；透明度tp(transparency)从0到100
 	setorigin(originx, 0);
@@ -248,13 +392,13 @@ void mainFrame::my_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int 
 		tp = 100;
 	}
 
-    // 获取背景指向显存的指针
+	// 获取背景指向显存的指针
 	DWORD* bk_pMem = GetImageBuffer(&pSrcImg);
 
 	//贴图指向显存的指针
 	DWORD* pMem = GetImageBuffer(&tempimg);
 
-    for (y = 0; y<pimg->getheight(); y++)
+	for (y = 0; y<pimg->getheight(); y++)
 	{
 		for (x = 0; x<pimg->getwidth(); x++)
 		{
