@@ -18,10 +18,8 @@ public:					/*构造、析构函数*/
 	~__MAINFRAME();
 public:					/*功能*/
 	void welcomeInit();	    //初始化欢迎界面
-	void saoMode();	        //SAO模式
+	//void saoMode();	        //SAO模式
 	void unlimitedMode();	//无限模式
-	//void cgShow();          //CG欣赏
-	//void composerShow();    //制作人员
 	void gameExit();	    //退出游戏
 	void bgm(int);          //播放bgm
 	void sound(int);        //播放音效

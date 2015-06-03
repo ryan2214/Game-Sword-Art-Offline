@@ -35,12 +35,8 @@ protected:		/****玩家属性****/
 	int y;
 	bool dir;               //0->左 1->右
 	int combo;              //连击状态
-	bool life;              //存活
 	bool isRun;             //跑动
 	bool isJump;            //跳跃
 	bool attacking;         //是否处于攻击状态
 	int skilltype;          //当前释放的技能编号
-	int skills[20];         //拥有的技能种类
-	int exp;
-	int level;
 }kirito;

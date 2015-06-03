@@ -145,11 +145,6 @@ void mainFrame::welcomeInit()
 	closegraph();
 }
 
-void mainFrame::saoMode()
-{
-
-}
-
 void mainFrame::unlimitedMode()
 {
 

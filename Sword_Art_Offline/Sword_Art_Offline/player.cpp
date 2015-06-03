@@ -1,4 +1,5 @@
 #include "player.h"
+#include "enemy.h"
 #include "skilllist.h"
 
 __PLAYER::__PLAYER() {}
@@ -73,6 +74,13 @@ void kirito::movex()		//基本移动
 void kirito::castskill(int skillnum)    //释放技能（技能编号）
 {
 	if (__SKILLLIST::ableToCast(skillnum))
+		enemy::damage(getattack());
 }
-bool stilljudge();      //判断是否静止
+bool kirito::stilljudge()     //判断是否静止
+{
+	if (isRun || isJump || attacking)
+		return false;
+	else
+		return true;
+}
 bool lifejudge();       //存活确认
