@@ -7,6 +7,8 @@ This is the first time for me to build a project, please feel free to give me yo
 
 If you debug this project for the first time, please install the font by hand~
 
+Using easyX to put image currentlyXD
+
 #Current Major Task:
 -Core Battle Code Building
 
