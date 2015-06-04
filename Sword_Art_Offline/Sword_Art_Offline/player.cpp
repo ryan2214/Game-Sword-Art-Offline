@@ -3,7 +3,17 @@
 #include "mainframe.h"
 #include "skilllist.h"
 
-__PLAYER::__PLAYER() {}
+__PLAYER::__PLAYER()
+{
+	teleport(300, 400);            //初始化__PLAYER数据
+	setDir(1);
+	setMaxHp(100);
+	setHp(50);
+	setAttack(10);
+	setSpd(10);     //单位px
+	setSkillState(0);
+	setSkillType(0);
+}
 
 __PLAYER::~__PLAYER() {}
 
@@ -95,6 +105,11 @@ bool kirito::jumpJudge()
 	else return false;
 }
 
+bool kirito::getDir()
+{
+	return dir;
+}
+
 void kirito::startJump()
 {
 	isJump = 1;
@@ -171,4 +186,9 @@ void kirito::setCombo(int num)
 void kirito::setSkillState(int num)
 {
 	skillState = num;
+}
+
+void kirito::setSkillType(int num)
+{
+	skillType = num;
 }

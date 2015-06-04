@@ -36,6 +36,7 @@ public:
 	void setSpd(int);       //设置移动速度
 	void setCombo(int);     //设置连击情况
 	void setSkillState(int);//设置技能释放状态
+	void setSkillType(int); //设置技能类型
 	
 protected:		/****玩家属性****/
 	int hp;                 //当前生命值

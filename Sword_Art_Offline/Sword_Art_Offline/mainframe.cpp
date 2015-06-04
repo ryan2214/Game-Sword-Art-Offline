@@ -1,5 +1,6 @@
 #include "mainframe.h"
 #include "enemy.h"
+#include "map.h"
 #pragma comment (lib, "winmm.lib")
 
 __MAINFRAME::__MAINFRAME() {}
@@ -69,18 +70,24 @@ int mainFrame::getOriginx()
 	return originx;
 }
 
+void mainFrame::setOriginx(int num)
+{
+	originx = num;
+}
+
 void mainFrame::screenMove(int x,int spd)
 {
-	if (x > (500 - getOriginx())){              //右移动边界
-		setOriginx(getOriginx() - spd);              //屏幕区域位置改变
+	int ox = mainFrame::getOriginx();
+	if (x > (500 - ox)){              //右移动边界
+		setOriginx(ox - spd);              //屏幕区域位置改变
 	}
-	if (x < (120 - getOriginx())){              //左移动边界
-		setOriginx(getOriginx() + spd);
+	if (x < (120 - ox)){              //左移动边界
+		setOriginx(ox + spd);
 	}
 
-	if (getOriginx() > 0)setOriginx(0);           //限制originx>=0
-	if (getOriginx() < -2144)setOriginx(- 2144);     //限制originx<=2144
-	setorigin(getOriginx(), 0);                 //重设原点
+	if (ox > 0)setOriginx(0);           //限制originx>=0
+	if (ox < -2144)setOriginx(- 2144);     //限制originx<=2144
+	setorigin(mainFrame::getOriginx(), 0);                 //重设原点
 }
 
 void mainFrame::welcomeInit()
@@ -173,29 +180,12 @@ void mainFrame::welcomeInit()
 	closegraph();
 }
 
-void mainFrame::dataInit()
-{
-	kirito.teleport(300,400);            //初始化kirito数据
-	kirito.setDir(1);
-	kirito.setMaxHp(100);
-	kirito.setHp(50);
-	kirito.setAttack(10);
-	kirito.setSpd(10);     //单位px
-	kirito.setSkillState(0);
-
-	enemy.teleport(500, 400);            //初始化enemy数据
-	enemy.setDir(0);
-	enemy.setMaxHp(100);
-	enemy.setHp(50);
-	enemy.setAttack(10);
-	enemy.setSpd(10);
-	enemy.setSkillState(0);
-}
-
 void mainFrame::unlimitedMode()
 {
 	IMAGE background, wbackground, welcome, player, skillpic250, skillpic300, enemyplayer, hpUI;
 	POINT pt;    //定义清理图像指针
+	pt.x = 0;   //清理图像指针赋值
+	pt.y = 0;
 	int comboclear = 0;
 	
 	//link start!
@@ -208,29 +198,40 @@ void mainFrame::unlimitedMode()
 
 		setorigin(originx, 0);//设置初始原点
 
-		// 加载图片
+		// 加载通用图片
 		loadimage(&welcome, "pic/welcome.jpg");
 		loadimage(&background, "pic/blank.jpg");	// 请确保该图片是 1072*600 像素
 		loadimage(&hpUI, "pic/hp_bar.jpg");
 		loadimage(&wbackground, "pic/whitebk.jpg");
 
-		dataInit();//赋予角色属性值
-
-		pt.x = 0;   //清理图像指针赋值
-		pt.y = 0;
-
 		//随机BGM
 		int m = ((rand() % 7) + 1);
 		bgm(m);
-		BeginBatchDraw();  //开始批量绘图
 
-		while (1){      //**********************************游戏主循环******************************
+		//开始批量绘图
+		BeginBatchDraw();  
+
+		while (1){      /**********************************游戏主循环******************************/
 
 			//检测人物位置，移动屏幕
 			screenMove(kirito.getX(),kirito.getMovespd());
 
-			if (kirito.getHp() <= 0)kirito.teleport(0,600);  //死亡判定
+			//死亡判定
+		    if (kirito.getHp() <= 0)kirito.teleport(0,600);  
 			if (enemy.getHp() <= 0)enemy.teleport(0,600);
+
+			//静止时的绘制
+			if (kirito.stillJudge()){                   
+				comboclear++;
+				if (comboclear == 20){
+					comboclear = 0;
+					kirito.setCombo(0);
+				}
+				kirito.still(kirito.getDir(), kirito.getX(), kirito.getY(), originx, player);   //静止角色图片
+			}
+			if (enemy.stillJudge()){
+				kirito.still(enemy.getDir(), enemy.getX(), enemy.getY(), originx, enemyplayer);  //静止敌人图片
+			}
 
 			//当有键盘输入时执行
 			if (_kbhit()){
@@ -258,32 +259,19 @@ void mainFrame::unlimitedMode()
 				}
 			}
 
-			if (kirito.jumpJudge()){    //若kirito处于跳跃状态，进行Y值改变
+			//若kirito处于跳跃状态，进行Y值改变
+			if (kirito.jumpJudge()){    
 				kirito.jump();
 			}
-			if (kirito.getSkill() > 0){
+
+			//技能释放时的绘制
+			if (kirito.getSkill() > 0){  
 				switch (kirito.getSkill()){
-				case 1:{
-					switch (kirito.getCombo()){
-					case 1:break;
-					}
-				}break;
+				case 1:kirito.meleeAttack(); break;
 				}
 			}
 				
-            if (kirito.stillJudge()){                    //静止时
-				comboclear++;
-				if (comboclear == 20){
-					comboclear = 0;
-					kirito.setCombo(0);
-				}
-				kirito.still(kirito.getDir(), kirito.getX(), kirito.getY(), originx, player);   //静止角色图片
-			}
-			if (enemy.stillJudge()){
-				kirito.still(enemy.getDir(), enemy.getX(), enemy.getY(), originx, enemyplayer);
-			}
-
-			FlushBatchDraw();      //绘制结果输出
+            FlushBatchDraw();      //绘制结果输出
 			Sleep(inter);          //控制帧率
 			M_clear(pt, &background,background);    //清空画面
 

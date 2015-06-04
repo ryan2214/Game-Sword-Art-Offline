@@ -19,7 +19,6 @@ public:					/*构造、析构函数*/
 	~__MAINFRAME();
 public:					/*功能*/
 	void welcomeInit();	    //初始化欢迎界面
-	void dataInit();        //数值初始化
 	//void saoMode();	        //SAO模式
 	void unlimitedMode();	//无限模式
 	void gameExit();	    //退出游戏
