@@ -4,7 +4,12 @@
 #include "map.h"
 #pragma comment (lib, "winmm.lib")
 
-__MAINFRAME::__MAINFRAME() {}
+__MAINFRAME::__MAINFRAME()
+{
+	originx = 0;
+	__MAP map;
+	__PLAYER kirito;
+}
 
 __MAINFRAME::~__MAINFRAME() {}
 

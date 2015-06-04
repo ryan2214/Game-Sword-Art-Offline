@@ -33,4 +33,5 @@ protected:
 	__PLAYER kirito;	     //玩家数据库
 	__ENEMY enemy;           //敌人数据库
 	__SKILLLIST skillList;   //技能数据库
+	__MAP map;
 }mainFrame;

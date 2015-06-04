@@ -1,5 +1,6 @@
 #include "player.h"
 #include "enemy.h"
+#include "map.h"
 #include "mainframe.h"
 #include "skilllist.h"
 
@@ -152,11 +153,11 @@ void kirito::meleeAttack(int enemy[],int enemyhp[],int num)
 	switch (dir){
 	case 0:{
 		for (int i = 0; i < num; i++){
-			if ((x-enemy[i])<=100)
-				map::setEnemyHp(i, map::getEnemyHp())
+			if ((x - enemy[i]) <= 100)
+				map::setEnemyHp(i, enemyhp[i] - attack);
 		}
 	}
-	case 1:
+	case 1:break;
 	}
 	
 	
