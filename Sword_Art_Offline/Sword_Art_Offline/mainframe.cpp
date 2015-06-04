@@ -253,7 +253,7 @@ void mainFrame::unlimitedMode()
 						kirito.moveX(player);
 						}
 					
-					if (KEY_DOWN(VK_ESCAPE)) closegraph();                    //ESCÍË³ö
+					if (KEY_DOWN(VK_ESCAPE)) gameExit();                    //ESCÍË³ö
 				}
 			}
 

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#define maxenemy 100
+#define maxenemy 1
 
 using namespace std;
 
@@ -24,6 +24,6 @@ protected:		/****玩家属性****/
 	int y;
 	int level;             //地图当前层数
 	int enemynum;          //敌人们的数量
-	int enemyx[maxenemy - 1];  //敌人们的位置
-	int enemyHp[maxenemy - 1]; //敌人们的Hp
+	int enemyx[maxenemy];  //敌人们的位置
+	int enemyHp[maxenemy]; //敌人们的Hp
 }map;

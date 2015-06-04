@@ -154,7 +154,7 @@ void kirito::meleeAttack(int enemy[],int enemyhp[],int num)
 	case 0:{
 		for (int i = 0; i < num; i++){
 			if ((x - enemy[i]) <= 100)
-				map::setEnemyHp(i, enemyhp[i] - attack);
+				map.setEnemyHp(i, enemyhp[i] - attack);
 		}
 	}
 	case 1:break;

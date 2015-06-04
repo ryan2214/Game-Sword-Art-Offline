@@ -1,4 +1,4 @@
-#include "mainframe.h"
+
 #include "map.h"
 
 __MAP::__MAP()
@@ -7,8 +7,8 @@ __MAP::__MAP()
 	y = 0;
 	level = 1;             //地图当前层数
 	enemynum = 0;          //敌人们的数量
-	enemyx[maxenemy-1] = { 0 };  //敌人们的位置
-	enemyHp[maxenemy-1] = { 0 };        //敌人的Hp
+	enemyx[maxenemy] = { 0 };  //敌人们的位置
+	enemyHp[maxenemy] = { 0 };        //敌人的Hp
 }
 __MAP::~__MAP(){}
 
