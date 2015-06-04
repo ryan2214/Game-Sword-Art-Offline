@@ -124,7 +124,7 @@ void kirito::useSkill(int skillnum)
 	}
 }
 
-void kirito::still(bool dir, int x, int y, int ox, IMAGE player)
+void kirito::still(int ox, IMAGE player)
 {
 	switch (dir){
 	case 0:{
@@ -138,11 +138,28 @@ void kirito::still(bool dir, int x, int y, int ox, IMAGE player)
 	}
 }
 
-void kirito::meleeAttack()
+void kirito::skillEffect(IMAGE player,IMAGE pic250,IMAGE pic300)
+{
+
+}
+
+void kirito::meleeAttack(int enemy[],int enemyhp[],int num)
 {
 	attacking = true;
+	skillType = 1;
+	skillState = 1;
 	//攻击判定
-	//输出技能图片
+	switch (dir){
+	case 0:{
+		for (int i = 0; i < num; i++){
+			if ((x-enemy[i])<=100)
+				map::setEnemyHp(i, map::getEnemyHp())
+		}
+	}
+	case 1:
+	}
+	
+	
 }
 
 //初始化用函数

@@ -1,4 +1,5 @@
 #include "mainframe.h"
+#include "player.h"
 #include "enemy.h"
 #include "map.h"
 #pragma comment (lib, "winmm.lib")
@@ -208,6 +209,9 @@ void mainFrame::unlimitedMode()
 		int m = ((rand() % 7) + 1);
 		bgm(m);
 
+		//计算时间用参数
+		int tik = 0;
+
 		//开始批量绘图
 		BeginBatchDraw();  
 
@@ -220,18 +224,7 @@ void mainFrame::unlimitedMode()
 		    if (kirito.getHp() <= 0)kirito.teleport(0,600);  
 			if (enemy.getHp() <= 0)enemy.teleport(0,600);
 
-			//静止时的绘制
-			if (kirito.stillJudge()){                   
-				comboclear++;
-				if (comboclear == 20){
-					comboclear = 0;
-					kirito.setCombo(0);
-				}
-				kirito.still(kirito.getDir(), kirito.getX(), kirito.getY(), originx, player);   //静止角色图片
-			}
-			if (enemy.stillJudge()){
-				kirito.still(enemy.getDir(), enemy.getX(), enemy.getY(), originx, enemyplayer);  //静止敌人图片
-			}
+			
 
 			//当有键盘输入时执行
 			if (_kbhit()){
@@ -263,14 +256,30 @@ void mainFrame::unlimitedMode()
 			if (kirito.jumpJudge()){    
 				kirito.jump();
 			}
-
-			//技能释放时的绘制
-			if (kirito.getSkill() > 0){  
+			//姿势判断
+			if (kirito.getSkill() > 0){
 				switch (kirito.getSkill()){
-				case 1:kirito.meleeAttack(); break;
-				}
+				case 0:{
+				}break;
 			}
-				
+			}
+			
+			//技能释放时的姿势和特效绘制
+			kirito::skillEffect(player,skillpic250,skillpic300);
+			
+			//静止时的putimg
+			if (kirito.stillJudge()){
+				comboclear++;
+				if (comboclear == 20){
+					comboclear = 0;
+					kirito.setCombo(0);
+				}
+				kirito.still(originx, player);   //静止角色图片
+			}
+			if (enemy.stillJudge()){
+				kirito.still(originx, enemyplayer);  //静止敌人图片
+			}
+
             FlushBatchDraw();      //绘制结果输出
 			Sleep(inter);          //控制帧率
 			M_clear(pt, &background,background);    //清空画面

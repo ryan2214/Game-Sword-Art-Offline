@@ -16,13 +16,14 @@ public:
 	int getHp();            //获取当前hp
 	int getSkill();         //获取当前释放技能编号
 	int getCombo();         //获取当前连击值
-	void meleeAttack();     //普通の攻击
+	void meleeAttack(int[],int[],int);     //普通の攻击
 	void damage(int);       //受到伤害
 	void jump();		    //跳跃
 	void moveX(IMAGE player);//基本移动
 	void startJump();       //跳起
 	void useSkill(int);     //释放技能
-	void still(bool dir, int x, int y, int ox, IMAGE player);//静止姿态
+	void still(int ox, IMAGE player);//静止姿态
+	void skillEffect(IMAGE,IMAGE,IMAGE);//技能姿势特效绘制
 	bool stillJudge();      //判断是否静止
 	bool jumpJudge();       //判断是否跳跃
 	bool getDir();          //获取方向
