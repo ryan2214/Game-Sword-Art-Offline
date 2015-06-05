@@ -2,13 +2,12 @@
 #include "player.h"
 #include "enemy.h"
 #include "map.h"
+#include <graphics.h>
 #pragma comment (lib, "winmm.lib")
 
 __MAINFRAME::__MAINFRAME()
 {
 	originx = 0;
-	__MAP map;
-	__PLAYER kirito;
 }
 
 __MAINFRAME::~__MAINFRAME() {}
@@ -174,7 +173,7 @@ void mainFrame::welcomeInit()
 
 		if (KEY_DOWN(VK_RETURN)){           //ENTER键开始新游戏（暂定）
 			sound(0);
-			//unlimitedMode();
+		    unlimitedMode();
 		}
 		if (KEY_DOWN(VK_ESCAPE)){           //按ESC键退出
 			bgm(9);
@@ -217,6 +216,8 @@ void mainFrame::unlimitedMode()
 		//计算时间用参数
 		int tik = 0;
 
+		//复活吧，我的勇士
+		__PLAYER();
 		//开始批量绘图
 		BeginBatchDraw();  
 
@@ -270,7 +271,7 @@ void mainFrame::unlimitedMode()
 			}
 			
 			//技能释放时的姿势和特效绘制
-			kirito::skillEffect(player,skillpic250,skillpic300);
+			//kirito::skillEffect(player,skillpic250,skillpic300);
 			
 			//静止时的putimg
 			if (kirito.stillJudge()){
@@ -364,6 +365,7 @@ void mainFrame::sound(int soundtype)
 
 void mainFrame::gameExit()
 {
+	bgm(9);
 	closegraph();
 }
 

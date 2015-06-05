@@ -10,6 +10,7 @@ __ENEMY::__ENEMY() :__PLAYER()
 	setSpd(10);     //µ¥Î»px
 	setSkillState(0);
 	setSkillType(0);
+	map.setEnemyNum(map.getEnemyNum()+1);
 }
 
 __ENEMY::~__ENEMY() {}

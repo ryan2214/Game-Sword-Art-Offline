@@ -1,5 +1,6 @@
 #pragma once
 #include <graphics.h>
+#include "map.h"
 
 using namespace std;
 
@@ -56,5 +57,5 @@ protected:		/****玩家属性****/
 	bool isRun;             //跑动
 	bool isJump;            //跳跃
 	bool attacking;         //是否处于攻击状态
-	
+	__MAP map;
 }kirito;

@@ -14,6 +14,9 @@ __PLAYER::__PLAYER()
 	setSpd(10);     //µ¥Î»px
 	setSkillState(0);
 	setSkillType(0);
+	isRun = false;
+	isJump = false;
+	attacking = false;
 }
 
 __PLAYER::~__PLAYER() {}
@@ -156,8 +159,13 @@ void kirito::meleeAttack(int enemy[],int enemyhp[],int num)
 			if ((x - enemy[i]) <= 100)
 				map.setEnemyHp(i, enemyhp[i] - attack);
 		}
-	}
-	case 1:break;
+	}break;
+	case 1:{
+		for (int i = 0; i < num; i++){
+			if ((enemy[i] - x) <= 100)
+				map.setEnemyHp(i, enemyhp[i] - attack);
+		}
+	}break;
 	}
 	
 	
