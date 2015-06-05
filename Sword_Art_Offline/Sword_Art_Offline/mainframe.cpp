@@ -51,7 +51,7 @@ void clearline(int i)                    //实现背景空白行扫描
 	line(i - 536, 0, i - 536, 599);
 }
 
-void copy_img(IMAGE* img1, IMAGE* img2)
+void mainFrame::copy_img(IMAGE* img1, IMAGE* img2)
 {
 	//copy img2 to img1
 	IMAGE* now_working = GetWorkingImage();
@@ -382,7 +382,7 @@ void mainFrame::M_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int t
 	int avoid_b = GetBValue(avoid_color);
 	IMAGE pSrcImg;//背景图
 	IMAGE tempimg;//临时贴图
-	copy_img(&tempimg, pimg);//保护原图
+	mainFrame::copy_img(&tempimg, pimg);//保护原图
 	SetWorkingImage(NULL);//对默认绘图窗口的绘图操作
 	getimage(&pSrcImg, dstX, dstY, pimg->getwidth(), pimg->getheight());
 

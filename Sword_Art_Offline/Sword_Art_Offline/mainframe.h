@@ -28,6 +28,7 @@ public:					/*功能*/
 	int getOriginx();      //获取绘图原点
 	void screenMove(int,int);      //屏幕适应性移动
 	static void M_putimg(int,int,IMAGE*,int,int,int);//绘制图片（背景透明&透明度可调）
+	static void copy_img(IMAGE*, IMAGE*); //复制图片，机巧图片不会受伤
 protected:
 	int originx;
 	__PLAYER kirito;	     //玩家数据库
