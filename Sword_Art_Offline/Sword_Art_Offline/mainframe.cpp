@@ -3,6 +3,7 @@
 #include "enemy.h"
 #include "map.h"
 #include <graphics.h>
+#include <conio.h>
 #pragma comment (lib, "winmm.lib")
 
 __MAINFRAME::__MAINFRAME()
@@ -51,6 +52,15 @@ void clearline(int i)                    //实现背景空白行扫描
 	line(i - 536, 0, i - 536, 599);
 }
 
+void M_clear(POINT pt, IMAGE *bk, IMAGE pic)//pt上一个动作图片的输出坐标，bk背景图片
+{
+	IMAGE clear;
+	SetWorkingImage(bk);//设定当前的绘图设备为背景图片
+	getimage(&clear, pt.x, pt.y, pic.getwidth(), pic.getheight());//获取图像
+	SetWorkingImage();//设定回默认绘图窗口
+	putimage(pt.x, pt.y, &clear);//输出
+}
+
 void mainFrame::copy_img(IMAGE* img1, IMAGE* img2)
 {
 	//copy img2 to img1
@@ -59,15 +69,6 @@ void mainFrame::copy_img(IMAGE* img1, IMAGE* img2)
 	SetWorkingImage(img2);
 	getimage(img1, 0, 0, img1->getwidth(), img1->getheight());
 	SetWorkingImage(now_working);
-}
-
-void M_clear(POINT pt, IMAGE *bk,IMAGE pic)//pt上一个动作图片的输出坐标，bk背景图片
-{
-	IMAGE clear;
-	SetWorkingImage(bk);//设定当前的绘图设备为背景图片
-	getimage(&clear, pt.x, pt.y, pic.getwidth(), pic.getheight());//获取图像
-	SetWorkingImage();//设定回默认绘图窗口
-	putimage(pt.x, pt.y, &clear);//输出
 }
 
 int mainFrame::getOriginx()
@@ -82,17 +83,16 @@ void mainFrame::setOriginx(int num)
 
 void mainFrame::screenMove(int x,int spd)
 {
-	int ox = mainFrame::getOriginx();
-	if (x > (500 - ox)){              //右移动边界
-		setOriginx(ox - spd);              //屏幕区域位置改变
+	if (x > (500 - originx)){              //右移动边界
+		originx -= spd;              //屏幕区域位置改变
 	}
-	if (x < (120 - ox)){              //左移动边界
-		setOriginx(ox + spd);
+	if (x < (120 - originx)){              //左移动边界
+		originx += spd;
 	}
 
-	if (ox > 0)setOriginx(0);           //限制originx>=0
-	if (ox < -2144)setOriginx(- 2144);     //限制originx<=2144
-	setorigin(mainFrame::getOriginx(), 0);                 //重设原点
+	if (originx > 0)originx = 0;           //限制originx>=0
+	if (originx < -2144)originx = -2144;     //限制originx<=2144
+	setorigin(originx, 0);                  //重设原点
 }
 
 void mainFrame::welcomeInit()
@@ -218,6 +218,8 @@ void mainFrame::unlimitedMode()
 
 		//复活吧，我的勇士
 		__PLAYER();
+		//世界筑造
+		__MAP();
 		//开始批量绘图
 		BeginBatchDraw();  
 
@@ -235,23 +237,23 @@ void mainFrame::unlimitedMode()
 			//当有键盘输入时执行
 			if (_kbhit()){
 
-				if (KEY_DOWN('J') && (!kirito.stillJudge())){                 //普通攻击"J"
-					kirito.useSkill(1);
+				if (KEY_DOWN('J') && kirito.stillJudge()){                 //普通攻击"J"
+					kirito.meleeAttack(map.getEnemyX(),map.getEnemyHp(),map.getEnemyNum());
 				}
 
 				else{
-					if (KEY_DOWN(VK_SPACE) && (!kirito.stillJudge())){        //按Space跳跃
+					if (KEY_DOWN(VK_SPACE) && (!kirito.jumpJudge())){        //按Space跳跃
 						kirito.startJump();
 					}
 
 					                     
 					if (KEY_DOWN('A')){                                       //按A向左移动
 						kirito.setDir(0);
-						kirito.moveX(player);
+						kirito.moveX(&player);
 						}
 					if (KEY_DOWN('D')){                                       //按D向右移动
 						kirito.setDir(1);
-						kirito.moveX(player);
+						kirito.moveX(&player);
 						}
 					
 					if (KEY_DOWN(VK_ESCAPE)) gameExit();                    //ESC退出
@@ -280,11 +282,16 @@ void mainFrame::unlimitedMode()
 					comboclear = 0;
 					kirito.setCombo(0);
 				}
-				kirito.still(originx, player);   //静止角色图片
+				kirito.stillput(originx, &player);   //静止角色图片
 			}
+		
 			if (enemy.stillJudge()){
-				kirito.still(originx, enemyplayer);  //静止敌人图片
+				kirito.stillput(originx, &enemyplayer);  //静止敌人图片
 			}
+
+			//如果kirito的still值小于等于0，则still每帧增加1
+			if (kirito.getStill() <= 0)
+				kirito.setStill(kirito.getStill() + 1);
 
             FlushBatchDraw();      //绘制结果输出
 			Sleep(inter);          //控制帧率

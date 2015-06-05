@@ -16,32 +16,32 @@ __MAP::~__MAP()
 	enemynum--;
 }
 
-int map::getEnemyX(int num)  //根据敌人编号获取敌人位置
+int __MAP::getEnemyX(int num)  //根据敌人编号获取敌人位置
 {
 	return enemyx[num];
 }
 
-int map::getEnemyHp(int num)  //根据编号获取敌人Hp
+int __MAP::getEnemyHp(int num)  //根据编号获取敌人Hp
 {
 	return enemyHp[num];
 }
 
-int map::getEnemyNum()     //获取当前敌人数量
+int __MAP::getEnemyNum()     //获取当前敌人数量
 {
 	return enemynum;
 }
 
-void map::setEnemyX(int num, int x) //改变定编号敌人的位置
+void __MAP::setEnemyX(int num, int x) //改变定编号敌人的位置
 {
 	enemyx[num] = x;
 }
 
-void map::setEnemyHp(int num, int hp)//改变定编号敌人的Hp
+void __MAP::setEnemyHp(int num, int hp)//改变定编号敌人的Hp
 {
 	enemyHp[num] = hp;
 }
 
-void map::setEnemyNum(int num)    //设置当前敌人数量
+void __MAP::setEnemyNum(int num)    //设置当前敌人数量
 {
 	enemynum = num;
 }
