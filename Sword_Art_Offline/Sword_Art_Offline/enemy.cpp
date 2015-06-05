@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include "mainframe.h"
 
 __ENEMY::__ENEMY() :__PLAYER()
 {
@@ -10,7 +11,27 @@ __ENEMY::__ENEMY() :__PLAYER()
 	setSpd(10);     //µ¥Î»px
 	setSkillState(0);
 	setSkillType(0);
-	map.setEnemyNum(map.getEnemyNum()+1);
+	addEnemyAmount();
+	map.setEnemyNum(getEnemyAmount());
 }
 
-__ENEMY::~__ENEMY() {}
+__ENEMY::~__ENEMY() 
+{
+	redEnemyAmount();
+	map.setEnemyNum(enemyAmount);
+}
+
+void __ENEMY::addEnemyAmount()
+{
+	enemyAmount++;
+}
+
+void __ENEMY::redEnemyAmount()
+{
+	enemyAmount--;
+}
+
+int __ENEMY::getEnemyAmount()
+{
+	return enemyAmount;
+}

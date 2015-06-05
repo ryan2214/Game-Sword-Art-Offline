@@ -20,11 +20,9 @@ public:
 	void meleeAttack(int[],int[],int);     //普通の攻击
 	void damage(int);       //受到伤害
 	void jump();		    //跳跃
-	void moveX(IMAGE*);//基本移动
+	void moveX(IMAGE*);     //基本移动
 	void startJump();       //跳起
 	void useSkill(int);     //释放技能
-	void stillput(int, IMAGE*);//静止姿态
-	void skillEffect(IMAGE,IMAGE,IMAGE);//技能姿势特效绘制
 	bool stillJudge();      //判断是否静止
 	bool jumpJudge();       //判断是否跳跃
 	bool attackJudge();     //判断是否处于攻击状态
@@ -42,6 +40,7 @@ public:
 	void setSkillState(int);//设置技能释放状态
 	void setSkillType(int); //设置技能类型
 	void setStill(int);        //使静止
+	void setRunState(int);   //设置跑动阶段
 	
 protected:		/****玩家属性****/
 	int hp;                 //当前生命值

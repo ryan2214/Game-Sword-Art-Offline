@@ -11,13 +11,14 @@ __PLAYER::__PLAYER()
 	setMaxHp(100);
 	setHp(50);
 	setAttack(10);
-	setSpd(10);     //单位px
+	setSpd(0);
 	setSkillState(0);
 	setSkillType(0);
 	isRun = false;
 	isJump = false;
 	attacking = false;
 	runState = 0;
+	still = 1;
 }
 
 __PLAYER::~__PLAYER() {}
@@ -70,34 +71,31 @@ void __PLAYER::jump()		    //跳跃
 void __PLAYER::moveX(IMAGE* player)		//基本移动 
 {
 	isRun = true;
-	if (runState <= 16)runState++;
-	switch (dir){
-	case 0:{
-		x -= movespd; 
-		if (x < 10)x = 10;
-		if (runState > 12)loadimage(player, "pic/ll4.jpg");
-		else if (runState > 8)loadimage(player, "pic/ll3.jpg");
-		else if (runState > 4)loadimage(player, "pic/ll2.jpg");
-		else if (runState > 0)loadimage(player, "pic/ll1.jpg");
-	}break;
-	case 1:{
-		x += movespd;
-		if (x > 3016)x = 3016;
-		if (runState > 12)loadimage(player, "pic/rr4.jpg");
-		else if (runState > 8)loadimage(player, "pic/rr3.jpg");
-		else if (runState > 4)loadimage(player, "pic/rr2.jpg");
-		else if (runState > 0)loadimage(player, "pic/rr1.jpg");
-	}break;
+	if (movespd != 0)
+		still = -1;
+	if (runState < 16)runState++;
+	x += movespd; 
+	if (x < 10){
+		x = 10 - (10 - x);
+		movespd = -movespd;
 	}
-	if (runState = 17)runState = 1;
+	if (x > 3016){
+		x = 3016 - (3016 - x);
+		movespd = -movespd;
+	}
+	if (runState > 12&&runState<=16)loadimage(player, "pic/ll4.jpg");
+	if (runState > 8&&runState<13)loadimage(player, "pic/ll3.jpg");
+	if (runState > 4&&runState<9)loadimage(player, "pic/ll2.jpg");
+	if (runState > 0&&runState<5)loadimage(player, "pic/ll1.jpg");
+	if (runState = 16)runState = 1;
 }
 
 bool __PLAYER::stillJudge()     //判断是否静止
 {
 	if (still==1)
-		return false;
-	else
 		return true;
+	else
+		return false;
 }
 
 bool __PLAYER::attackJudge()
@@ -130,25 +128,6 @@ void __PLAYER::useSkill(int skillnum)
 	case 1:skillType = 1, skillState = 1; break;
 	default:break;
 	}
-}
-
-void __PLAYER::stillput(int ox, IMAGE* player)
-{
-	switch (dir){
-	case 0:{
-		loadimage(player, "pic/lstill.jpg");
-		mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
-	}break;
-	case 1:{
-		loadimage(player, "pic/rstill.jpg");
-		mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
-	}break;
-	}
-}
-
-void __PLAYER::skillEffect(IMAGE player, IMAGE pic250, IMAGE pic300)
-{
-
 }
 
 void __PLAYER::meleeAttack(int enemy[], int enemyhp[], int num)
@@ -231,4 +210,9 @@ void __PLAYER::setSkillType(int num)
 void __PLAYER::setStill(int num)
 {
 	still = num;
+}
+
+void __PLAYER::setRunState(int num)
+{
+	runState = num;
 }

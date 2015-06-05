@@ -61,6 +61,43 @@ void M_clear(POINT pt, IMAGE *bk, IMAGE pic)//pt上一个动作图片的输出坐标，bk背景
 	putimage(pt.x, pt.y, &clear);//输出
 }
 
+void __MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int type)
+{
+	switch (type){
+	case 0:{
+		switch (dir){
+		case 0:{
+			loadimage(player, "pic/lstill.jpg");
+			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
+		}break;
+		case 1:{
+			loadimage(player, "pic/rstill.jpg");
+			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
+		}break;
+		}
+	}break;
+	case 1:{
+		switch (dir){
+		case 0:{
+			loadimage(player, "pic/les.jpg");
+			mainFrame::M_putimg(x, y,player, WHITE, 100, ox);
+		}break;
+		case 1:{
+			loadimage(player, "pic/res.jpg");
+			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
+		}break;
+		}
+	}break;
+
+	}
+}
+
+void __MAINFRAME::skillEffect(IMAGE player, IMAGE pic250, IMAGE pic300)
+{
+
+}
+
+
 void mainFrame::copy_img(IMAGE* img1, IMAGE* img2)
 {
 	//copy img2 to img1
@@ -84,10 +121,12 @@ void mainFrame::setOriginx(int num)
 void mainFrame::screenMove(int x,int spd)
 {
 	if (x > (500 - originx)){              //右移动边界
-		originx -= spd;              //屏幕区域位置改变
+		originx -= spd;                    //屏幕区域位置改变
 	}
 	if (x < (120 - originx)){              //左移动边界
 		originx += spd;
+		if (originx > -120)
+			originx = 0;
 	}
 
 	if (originx > 0)originx = 0;           //限制originx>=0
@@ -156,7 +195,7 @@ void mainFrame::welcomeInit()
 			}
 			if (KEY_DOWN(VK_LBUTTON)){
 				sound(0);
-				//unlimitedMode();
+				unlimitedMode();
 			}
 
 		}
@@ -191,7 +230,6 @@ void mainFrame::unlimitedMode()
 	POINT pt;    //定义清理图像指针
 	pt.x = 0;   //清理图像指针赋值
 	pt.y = 0;
-	int comboclear = 0;
 	
 	//link start!
 	//HWND hwnd = MCIWndCreate(GetHWnd(), NULL, WS_CHILD | WS_VISIBLE | MCIWNDF_NOMENU | MCIWNDF_NOPLAYBAR, NULL);
@@ -199,108 +237,119 @@ void mainFrame::unlimitedMode()
 	//MCIWndPlay(hwnd);
 	//Sleep(17000);
 
-		FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+	settextstyle(30, 8, _T("SAO UI"));       //初始化背景字体和字母颜色
+	settextcolor(YELLOW);
+	setlinecolor(BLACK);
 
-		setorigin(originx, 0);//设置初始原点
+	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 
-		// 加载通用图片
-		loadimage(&welcome, "pic/welcome.jpg");
-		loadimage(&background, "pic/blank.jpg");	// 请确保该图片是 1072*600 像素
-		loadimage(&hpUI, "pic/hp_bar.jpg");
-		loadimage(&wbackground, "pic/whitebk.jpg");
+	setorigin(originx, 0);//设置初始原点
 
-		//随机BGM
-		int m = ((rand() % 7) + 1);
-		bgm(m);
+	// 加载通用图片
+	loadimage(&welcome, "pic/welcome.jpg");
+	loadimage(&background, "pic/blank.jpg");	// 请确保该图片是 1072*600 像素
+	loadimage(&hpUI, "pic/hp_bar.jpg");
+	loadimage(&wbackground, "pic/whitebk.jpg");
 
-		//计算时间用参数
-		int tik = 0;
+	// 设置随机函数种子
+	srand((unsigned)time(NULL));
+	// 随机BGM
+	int m = ((rand() % 7) + 1);
+	bgm(m);
 
-		//复活吧，我的勇士
-		__PLAYER();
-		//世界筑造
-		__MAP();
-		//开始批量绘图
-		BeginBatchDraw();  
+	//计算时间用参数
+	int tik = 0;
 
-		while (1){      /**********************************游戏主循环******************************/
+	//复活吧，我的勇士
+		
+	//世界筑造
+		
+	//开始批量绘图
+	BeginBatchDraw();  
 
-			//检测人物位置，移动屏幕
-			screenMove(kirito.getX(),kirito.getMovespd());
+	while (1){      /**********************************游戏主循环******************************/
 
-			//死亡判定
-		    if (kirito.getHp() <= 0)kirito.teleport(0,600);  
-			if (enemy.getHp() <= 0)enemy.teleport(0,600);
+		//死亡判定
+		if (kirito.getHp() <= 0)kirito.teleport(0,600);  
+		if (enemy.getHp() <= 0)enemy.teleport(0,600);
+		//摩擦力
+		if(kirito.getMovespd()>0&&!kirito.jumpJudge())
+			kirito.setSpd(kirito.getMovespd() - 1);
+		if (kirito.getMovespd()<0&&!kirito.jumpJudge())
+			kirito.setSpd(kirito.getMovespd() + 1);
+		//kirito移动
+		kirito.moveX(&player);
+		//检测人物位置，移动屏幕
+		screenMove(kirito.getX(), kirito.getMovespd());
 
-			
+		//当有键盘输入时执行
+		if (_kbhit()){
 
-			//当有键盘输入时执行
-			if (_kbhit()){
+			if (KEY_DOWN('J') && kirito.stillJudge()){                 //普通攻击"J"
+			//	kirito.meleeAttack(map.getEnemyX(),map.getEnemyHp(),map.getEnemyNum());
+			}
 
-				if (KEY_DOWN('J') && kirito.stillJudge()){                 //普通攻击"J"
-					kirito.meleeAttack(map.getEnemyX(),map.getEnemyHp(),map.getEnemyNum());
+			else{
+				if (KEY_DOWN(VK_SPACE) && (!kirito.jumpJudge())){        //按Space跳跃
+					kirito.startJump();
 				}
-
-				else{
-					if (KEY_DOWN(VK_SPACE) && (!kirito.jumpJudge())){        //按Space跳跃
-						kirito.startJump();
-					}
 
 					                     
-					if (KEY_DOWN('A')){                                       //按A向左移动
-						kirito.setDir(0);
-						kirito.moveX(&player);
-						}
-					if (KEY_DOWN('D')){                                       //按D向右移动
-						kirito.setDir(1);
-						kirito.moveX(&player);
-						}
+				if (KEY_DOWN('A')){                                       //按A向左移动
+					kirito.setDir(0);
+					kirito.setRunState(1);
+					kirito.setSpd(-10);
+					if (KEY_DOWN(VK_SHIFT))
+						kirito.setSpd(-15);
+					}
+				if (KEY_DOWN('D')){                                       //按D向右移动
+					kirito.setDir(1);
+					kirito.setRunState(1);
+					kirito.setSpd(10);
+					if (KEY_DOWN(VK_SHIFT))
+						kirito.setSpd(15);
+					}
 					
-					if (KEY_DOWN(VK_ESCAPE)) gameExit();                    //ESC退出
+				if (KEY_DOWN(VK_ESCAPE)) gameExit();                    //ESC退出
 				}
-			}
+		}
 
-			//若kirito处于跳跃状态，进行Y值改变
-			if (kirito.jumpJudge()){    
-				kirito.jump();
-			}
-			//姿势判断
-			if (kirito.getSkill() > 0){
-				switch (kirito.getSkill()){
-				case 0:{
-				}break;
-			}
-			}
+		//若kirito处于跳跃状态，进行Y值改变
+		if (kirito.jumpJudge()){    
+			kirito.jump();
+		}
+		//姿势判断
+		if (kirito.getSkill() > 0){
+			switch (kirito.getSkill()){
+			case 0:{
+			}break;
+		}
+		}
 			
-			//技能释放时的姿势和特效绘制
-			//kirito::skillEffect(player,skillpic250,skillpic300);
+		//技能释放时的姿势和特效绘制
+		//kirito::skillEffect(player,skillpic250,skillpic300);
 			
-			//静止时的putimg
-			if (kirito.stillJudge()){
-				comboclear++;
-				if (comboclear == 20){
-					comboclear = 0;
-					kirito.setCombo(0);
-				}
-				kirito.stillput(originx, &player);   //静止角色图片
-			}
+		//静止时的putimg
+		if (kirito.stillJudge()){
+			stillput(kirito.getDir(),kirito.getX(),kirito.getY(),originx, &player,0);   //静止角色图片
+		}
 		
-			if (enemy.stillJudge()){
-				kirito.stillput(originx, &enemyplayer);  //静止敌人图片
-			}
+		if (enemy.stillJudge()){
+			stillput(enemy.getDir(),enemy.getX(), enemy.getY(), originx, &enemyplayer,1);  //静止敌人图片
+		}
 
-			//如果kirito的still值小于等于0，则still每帧增加1
-			if (kirito.getStill() <= 0)
-				kirito.setStill(kirito.getStill() + 1);
+		//如果kirito的still值小于等于0，则still每帧增加1
+		if (kirito.getStill() <= 0)
+			kirito.setStill(kirito.getStill() + 1);
 
-            FlushBatchDraw();      //绘制结果输出
-			Sleep(inter);          //控制帧率
-			M_clear(pt, &background,background);    //清空画面
+        FlushBatchDraw();      //绘制结果输出
+		Sleep(inter);          //控制帧率
+		M_clear(pt, &background,background);    //清空画面
 
 
-		}//***************************************主循环结束*******************************************
+	}//***************************************主循环结束*******************************************
 
-		closegraph();
+	closegraph();
 	
 }
 
@@ -308,41 +357,41 @@ void mainFrame::bgm(int song)
 {
 	switch (song){
 	case 0:{
-		mciSendString(TEXT("open bgm/crossing_field.mp3 alias Mysong"), NULL, 0, NULL);
-		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/crossing_field.mp3 alias bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
 	}break;
 	case 1:{
-		mciSendString(TEXT("open bgm/Swordland.mp3 alias Mysong"), NULL, 0, NULL);
-		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/Swordland.mp3 alias bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
 	}break;
 	case 2:{
-		mciSendString(TEXT("open bgm/The_First_Town.mp3 alias Mysong"), NULL, 0, NULL);
-		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/The_First_Town.mp3 alias bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
 	}break;
 	case 3:{
-		mciSendString(TEXT("open bgm/Survive_The_Swordland.mp3 alias Mysong"), NULL, 0, NULL);
-		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/Survive_The_Swordland.mp3 alias bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
 	}break;
 	case 4:{
-		mciSendString(TEXT("open bgm/Luminous_Sword.mp3 alias Mysong"), NULL, 0, NULL);
-		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/Luminous_Sword.mp3 alias bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
 	}break;
 	case 5:{
-		mciSendString(TEXT("open bgm/light_your_sword.mp3 alias Mysong"), NULL, 0, NULL);
-		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/light_your_sword.mp3 alias bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
 	}break;
 	case 6:{
-		mciSendString(TEXT("open bgm/Everyday_Life.mp3 alias Mysong"), NULL, 0, NULL);
-		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/Everyday_Life.mp3 alias bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
 	}break;
 	case 7:{
-		mciSendString(TEXT("open bgm/She_has_to_overcome_her_fear.mp3 alias Mysong"), NULL, 0, NULL);
-		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/She_has_to_overcome_her_fear.mp3 alias bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
 	}break;
 
 
 	case 9:{
-		mciSendString(TEXT("stop MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("stop bgm"), NULL, 0, NULL);
 	}
 	default:break;
 	}
