@@ -12,13 +12,11 @@ __ENEMY::__ENEMY() :__PLAYER()
 	setSkillState(0);
 	setSkillType(0);
 	addEnemyAmount();
-	map.setEnemyNum(getEnemyAmount());
 }
 
 __ENEMY::~__ENEMY() 
 {
 	redEnemyAmount();
-	map.setEnemyNum(enemyAmount);
 }
 
 void __ENEMY::addEnemyAmount()

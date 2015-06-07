@@ -1,6 +1,5 @@
 #pragma once
 #include <graphics.h>
-#include "map.h"
 
 using namespace std;
 
@@ -17,17 +16,22 @@ public:
 	int getHp();            //获取当前hp
 	int getSkill();         //获取当前释放技能编号
 	int getCombo();         //获取当前连击值
-	void meleeAttack(int[],int[],int);     //普通の攻击
+	void meleeAttack(int, int, __PLAYER, IMAGE*, IMAGE*, IMAGE*, IMAGE*, int);     //普通の攻击
 	void damage(int);       //受到伤害
 	void jump();		    //跳跃
-	void moveX(IMAGE*);     //基本移动
+	void moveX(IMAGE*,int);     //基本移动
 	void startJump();       //跳起
 	void useSkill(int);     //释放技能
 	bool stillJudge();      //判断是否静止
 	bool jumpJudge();       //判断是否跳跃
+	bool runJudge();        //判断是否跑动
 	bool attackJudge();     //判断是否处于攻击状态
 	bool getDir();          //获取方向
 	int getStill();
+	void restill();         //恢复静止
+	int getSkillState();    //获取技能状态
+	int getRunState();      //获取跑动状态
+	void skillEffect(IMAGE*,IMAGE*,int);     //给技能加特技
 
 	//初始化用函数
 	void teleport(int, int);//用于玩家传送
@@ -60,5 +64,5 @@ protected:		/****玩家属性****/
 	bool isRun;             //跑动
 	bool isJump;            //跳跃
 	bool attacking;         //是否处于攻击状态
-	__MAP map;
-}kirito;
+
+}kirito,enemy;

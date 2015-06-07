@@ -1,9 +1,9 @@
 #include "mainframe.h"
 #include "player.h"
-#include "enemy.h"
-#include "map.h"
 #include <graphics.h>
 #include <conio.h>
+#include <windows.h>
+#include <mmsystem.h>
 #pragma comment (lib, "winmm.lib")
 
 __MAINFRAME::__MAINFRAME()
@@ -154,7 +154,7 @@ void mainFrame::welcomeInit()
 	char headline[] = "s w o r d    a r t    o f f l i n e";
 	char ETS[] = "PRESS ENTER TO START";
 	
-	bgm(0);                                  //播放crossing_field.mp3
+	//bgm(0);                                  //播放crossing_field.mp3
 	
 	settextstyle(30, 8, _T("SAO UI"));       //初始化背景字体和字母颜色
 	settextcolor(YELLOW);
@@ -195,6 +195,7 @@ void mainFrame::welcomeInit()
 			}
 			if (KEY_DOWN(VK_LBUTTON)){
 				sound(0);
+				bgm(9);
 				unlimitedMode();
 			}
 
@@ -212,6 +213,7 @@ void mainFrame::welcomeInit()
 
 		if (KEY_DOWN(VK_RETURN)){           //ENTER键开始新游戏（暂定）
 			sound(0);
+			bgm(9);
 		    unlimitedMode();
 		}
 		if (KEY_DOWN(VK_ESCAPE)){           //按ESC键退出
@@ -224,7 +226,7 @@ void mainFrame::welcomeInit()
 	closegraph();
 }
 
-void mainFrame::unlimitedMode()
+int mainFrame::unlimitedMode()
 {
 	IMAGE background, wbackground, welcome, player, skillpic250, skillpic300, enemyplayer, hpUI;
 	POINT pt;    //定义清理图像指针
@@ -251,17 +253,19 @@ void mainFrame::unlimitedMode()
 	loadimage(&hpUI, "pic/hp_bar.jpg");
 	loadimage(&wbackground, "pic/whitebk.jpg");
 
-	// 设置随机函数种子
-	srand((unsigned)time(NULL));
 	// 随机BGM
-	int m = ((rand() % 7) + 1);
+	int m = ((rand() % 6) + 2);
 	bgm(m);
 
 	//计算时间用参数
 	int tik = 0;
 
 	//复活吧，我的勇士
-		
+	__PLAYER kirito;
+	//为你而战，我的女士
+	__PLAYER enemy;
+	enemy.teleport(500, 400);
+	enemy.setDir(0);
 	//世界筑造
 		
 	//开始批量绘图
@@ -278,7 +282,8 @@ void mainFrame::unlimitedMode()
 		if (kirito.getMovespd()<0&&!kirito.jumpJudge())
 			kirito.setSpd(kirito.getMovespd() + 1);
 		//kirito移动
-		kirito.moveX(&player);
+		if (kirito.runJudge())
+		kirito.moveX(&player,originx);
 		//检测人物位置，移动屏幕
 		screenMove(kirito.getX(), kirito.getMovespd());
 
@@ -286,7 +291,8 @@ void mainFrame::unlimitedMode()
 		if (_kbhit()){
 
 			if (KEY_DOWN('J') && kirito.stillJudge()){                 //普通攻击"J"
-			//	kirito.meleeAttack(map.getEnemyX(),map.getEnemyHp(),map.getEnemyNum());
+				kirito.meleeAttack(enemy.getX(),enemy.getHp(),enemy,&player,&enemyplayer,&skillpic250,&skillpic300,originx);
+				sound(2);
 			}
 
 			else{
@@ -297,20 +303,25 @@ void mainFrame::unlimitedMode()
 					                     
 				if (KEY_DOWN('A')){                                       //按A向左移动
 					kirito.setDir(0);
-					kirito.setRunState(1);
+					if (kirito.getRunState()==0)
+						kirito.setRunState(1);
 					kirito.setSpd(-10);
 					if (KEY_DOWN(VK_SHIFT))
 						kirito.setSpd(-15);
 					}
 				if (KEY_DOWN('D')){                                       //按D向右移动
 					kirito.setDir(1);
-					kirito.setRunState(1);
+					if (kirito.getRunState() == 0)
+						kirito.setRunState(1);
 					kirito.setSpd(10);
 					if (KEY_DOWN(VK_SHIFT))
 						kirito.setSpd(15);
 					}
 					
-				if (KEY_DOWN(VK_ESCAPE)) gameExit();                    //ESC退出
+				if (KEY_DOWN(VK_ESCAPE)){
+					bgm(9);
+					return 0;
+				}//ESC退出
 				}
 		}
 
@@ -318,16 +329,10 @@ void mainFrame::unlimitedMode()
 		if (kirito.jumpJudge()){    
 			kirito.jump();
 		}
-		//姿势判断
-		if (kirito.getSkill() > 0){
-			switch (kirito.getSkill()){
-			case 0:{
-			}break;
-		}
-		}
 			
 		//技能释放时的姿势和特效绘制
-		//kirito::skillEffect(player,skillpic250,skillpic300);
+		kirito.skillEffect(&skillpic250,&skillpic300,originx);
+	
 			
 		//静止时的putimg
 		if (kirito.stillJudge()){
@@ -339,8 +344,7 @@ void mainFrame::unlimitedMode()
 		}
 
 		//如果kirito的still值小于等于0，则still每帧增加1
-		if (kirito.getStill() <= 0)
-			kirito.setStill(kirito.getStill() + 1);
+		kirito.restill();
 
         FlushBatchDraw();      //绘制结果输出
 		Sleep(inter);          //控制帧率
@@ -357,41 +361,41 @@ void mainFrame::bgm(int song)
 {
 	switch (song){
 	case 0:{
-		mciSendString(TEXT("open bgm/crossing_field.mp3 alias bgm"), NULL, 0, NULL);
-		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/crossing_field.mp3 alias MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
 	case 1:{
-		mciSendString(TEXT("open bgm/Swordland.mp3 alias bgm"), NULL, 0, NULL);
-		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/Swordland.mp3 alias MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
 	case 2:{
-		mciSendString(TEXT("open bgm/The_First_Town.mp3 alias bgm"), NULL, 0, NULL);
-		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/The_First_Town.mp3 alias MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
 	case 3:{
-		mciSendString(TEXT("open bgm/Survive_The_Swordland.mp3 alias bgm"), NULL, 0, NULL);
-		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/Survive_The_Swordland.mp3 alias MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
 	case 4:{
-		mciSendString(TEXT("open bgm/Luminous_Sword.mp3 alias bgm"), NULL, 0, NULL);
-		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/Luminous_Sword.mp3 alias MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
 	case 5:{
-		mciSendString(TEXT("open bgm/light_your_sword.mp3 alias bgm"), NULL, 0, NULL);
-		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/light_your_sword.mp3 alias MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
 	case 6:{
-		mciSendString(TEXT("open bgm/Everyday_Life.mp3 alias bgm"), NULL, 0, NULL);
-		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/Everyday_Life.mp3 alias MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
 	case 7:{
-		mciSendString(TEXT("open bgm/She_has_to_overcome_her_fear.mp3 alias bgm"), NULL, 0, NULL);
-		mciSendString(TEXT("play bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("open bgm/She_has_to_overcome_her_fear.mp3 alias MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
 
 
 	case 9:{
-		mciSendString(TEXT("stop bgm"), NULL, 0, NULL);
+		mciSendString(TEXT("stop MySong"), NULL, 0, NULL);
 	}
 	default:break;
 	}

@@ -5,10 +5,7 @@
 #include <graphics.h>
 #include <time.h>
 #include <conio.h>
-#include "enemy.h"
 #include "player.h"
-#include "skilllist.h"
-#include "map.h"
 
 using namespace std;
 
@@ -20,7 +17,7 @@ public:					/*构造、析构函数*/
 public:					/*功能*/
 	void welcomeInit();				 //初始化欢迎界面
 	//void saoMode();				 //SAO模式
-	void unlimitedMode();			 //无限模式
+	int unlimitedMode();			 //无限模式
 	void gameExit();				 //退出游戏
 	void bgm(int);					 //播放bgm
 	void sound(int);				 //播放音效
@@ -34,7 +31,4 @@ public:					/*功能*/
 protected:
 	int originx;
 	__PLAYER kirito;	     //玩家数据库
-	__ENEMY enemy;           //敌人数据库
-	__SKILLLIST skillList;   //技能数据库
-	__MAP map;
 }mainFrame;
