@@ -1,6 +1,8 @@
 #include "player.h"
 #include "mainframe.h"
 
+#define KEY_DOWN(vk_c) (GetAsyncKeyState(vk_c)&0x8000?1:0)
+
 __PLAYER::__PLAYER()
 {
 	teleport(300, 400);            //初始化__PLAYER数据
@@ -13,9 +15,11 @@ __PLAYER::__PLAYER()
 	setSkillType(0);
 	isRun = false;
 	isJump = false;
-	attacking = false;
+	coolDown = 0;
 	runState = 0;
 	still = 1;
+	run = 0;
+	combo = 0;
 }
 
 __PLAYER::~__PLAYER() {}
@@ -65,53 +69,61 @@ void __PLAYER::jump()		    //跳跃
 	}
 }
 
-void __PLAYER::moveX(IMAGE* player,int ox)		//基本移动 
+void __PLAYER::running(IMAGE* player, int ox)
 {
-		still = -10;
-	
-	x += movespd; 
-	if (x < 10){
-		x = 10 - (10 - x);
-		movespd = -movespd;
-	}
-	if (x > 3016){
-		x = 3016 - (3016 - x);
-		movespd = -movespd;
-	}
-	if (isRun)
-	{
+	switch (dir){
+	case 1:{
+		run++;
+		if (run >= 17)run = 1;
+
+		if (run >= 4)runState = 2;
+		if (run >= 8)runState = 3;
+		if (run >= 12)runState = 4;
+		if (run >= 16)runState = 1;
 		switch (runState){
-		case 1:
-		case 2:
-		case 3:{
-			loadimage(player, "pic/rr1.jpg");
-			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
-			runState++;
-		}break;
-		case 4:
-		case 5:
-		case 6:{
-			loadimage(player, "pic/rr2.jpg");
-			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
-			runState++;
-		}break;
-		case 7:
-		case 8:
-		case 9:{
-			loadimage(player, "pic/rr3.jpg");
-			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
-			runState++;
-		}break;
-		case 10:
-		case 11:
-		case 12:{
-			loadimage(player, "pic/rr4.jpg");
-			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
-			runState++;
-		}break;
+		case 1:loadimage(player, "pic/rr1.jpg"); break;
+		case 2:loadimage(player, "pic/rr2.jpg"); break;
+		case 3:loadimage(player, "pic/rr3.jpg"); break;
+		case 4:loadimage(player, "pic/rr4.jpg"); break;
 		}
-		if (runState == 13)runState = 1;
-		
+		mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
+	}break;
+	case 0:{
+		run++;
+		if (run >= 17)run = 1;
+
+		if (run >= 4)runState = 2;
+		if (run >= 8)runState = 3;
+		if (run >= 12)runState = 4;
+		if (run >= 16)runState = 1;
+		switch (runState){
+		case 1:loadimage(player, "pic/ll1.jpg"); break;
+		case 2:loadimage(player, "pic/ll2.jpg"); break;
+		case 3:loadimage(player, "pic/ll3.jpg"); break;
+		case 4:loadimage(player, "pic/ll4.jpg"); break;
+		}
+		mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
+	}break;
+	}
+}
+
+void __PLAYER::moveX()		//基本移动 
+{
+	x += movespd; 
+	
+	switch (dir){
+	case 1:{
+		if (x > 3016){
+			x = 3016;
+			
+		}
+	}break;
+	case 0:{
+		if (x <10){
+			x = 10;
+			
+		}
+	}break;
 	}
 }
 
@@ -125,12 +137,9 @@ bool __PLAYER::stillJudge()     //判断是否静止
 
 bool __PLAYER::runJudge()
 {
-	return isRun;
-}
-
-bool __PLAYER::attackJudge()
-{
-	return attacking;
+	if(isRun)
+		return true;
+	return false;
 }
 
 bool __PLAYER::jumpJudge()
@@ -162,19 +171,20 @@ void __PLAYER::useSkill(int skillnum)
 
 void __PLAYER::meleeAttack(int enemyx, int enemyhp,__PLAYER enemy, IMAGE *player, IMAGE *enemyplayer, IMAGE *skillpic250, IMAGE *skillpic300, int originx)
 {
-	attacking = true;
 	skillType = 1;
-	skillState = 1;
+	skillState = 7;
+	coolDown = 10;
 	//攻击判定
 	combo++;
 	still = -10;
 	switch (dir){
 	case 0:{
-		if ((x - enemy.x) <= 100 && (x - enemy.x) >= 0){         /****击中判断****/
-			enemy.hp -= attack;                                         //击中造成伤害
-			enemy.still = -5;                                                  //击中造成僵直
-			enemy.x -= 10;                                                     //击中造成击退
-		 /****击中判断结束****/
+		if ((x - enemy.getX()) <= 500 && (x - enemy.getX()) >= 0){         /****击中判断****/
+			enemy.setHp(enemy.getHp()-attack);                                         //击中造成伤害
+			enemy.setStill(-5);                                                  //击中造成僵直
+			enemy.teleport(enemy.getX() - 10,enemy.getY());                                                     //击中造成击退
+			loadimage(enemyplayer, "pic/enemylrunning3.jpg");                 //加载被击中时姿势
+			mainFrame::M_putimg(enemy.x, enemy.y, enemyplayer, WHITE, 100, originx); /****击中判断结束****/
 		}
 
 		switch (combo){
@@ -239,11 +249,12 @@ int __PLAYER::getStill()
 
 void __PLAYER::restill()
 {
-	if (still < 1)
+	if (still<1)
 		still++;
 	if (still == 1){
 		isRun = false;
-		skillType = 0;
+		run = 0;
+		runState = 0;
 	}
 }
 
@@ -290,6 +301,34 @@ void __PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, int ox)
 		}
 	}
 	}
+}
+
+void __PLAYER::startRun()
+{
+	isRun = true;
+}
+
+void __PLAYER::coolingDown()
+{
+	coolDown--;
+	if (coolDown < 0)
+		coolDown = 0;
+}
+
+bool __PLAYER::coolingJudge()
+{
+	if (coolDown > 0)
+		return true;
+	return false;
+}
+
+void __PLAYER::skillStateMove()
+{
+	if (skillState > 0)
+		skillState--;
+	if (skillState < 0)
+		skillState = 0;
+
 }
 
 //初始化用函数
@@ -350,4 +389,12 @@ void __PLAYER::setRunState(int num)
 	runState = num;
 	if (num > 0)
 		isRun = true;
+	
+}
+
+void __PLAYER::setRun(int num)
+{
+	run = num;
+	if (num == 0)
+		isRun = 0;
 }

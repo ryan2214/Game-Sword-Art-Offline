@@ -4,7 +4,9 @@
 #include <conio.h>
 #include <windows.h>
 #include <mmsystem.h>
+#include "Vfw.h"
 #pragma comment (lib, "winmm.lib")
+#pragma comment (lib, "Vfw32.lib")
 
 __MAINFRAME::__MAINFRAME()
 {
@@ -121,17 +123,15 @@ void mainFrame::setOriginx(int num)
 void mainFrame::screenMove(int x,int spd)
 {
 	if (x > (500 - originx)){              //右移动边界
-		originx -= spd;                    //屏幕区域位置改变
+		originx -= spd;              //屏幕区域位置改变
 	}
 	if (x < (120 - originx)){              //左移动边界
-		originx += spd;
-		if (originx > -120)
-			originx = 0;
+		originx -=spd;
 	}
 
 	if (originx > 0)originx = 0;           //限制originx>=0
 	if (originx < -2144)originx = -2144;     //限制originx<=2144
-	setorigin(originx, 0);                  //重设原点
+	setorigin(originx, 0);                 //重设原点
 }
 
 void mainFrame::welcomeInit()
@@ -235,7 +235,7 @@ int mainFrame::unlimitedMode()
 	
 	//link start!
 	//HWND hwnd = MCIWndCreate(GetHWnd(), NULL, WS_CHILD | WS_VISIBLE | MCIWNDF_NOMENU | MCIWNDF_NOPLAYBAR, NULL);
-	//MCIWndOpen(hwnd, "avi\\loadgame.wmv", NULL);
+	////MCIWndOpen(hwnd, "avi\\loadgame.wmv", NULL);
 	//MCIWndPlay(hwnd);
 	//Sleep(17000);
 
@@ -259,6 +259,7 @@ int mainFrame::unlimitedMode()
 
 	//计算时间用参数
 	int tik = 0;
+	int comboclear = 0;
 
 	//复活吧，我的勇士
 	__PLAYER kirito;
@@ -273,6 +274,9 @@ int mainFrame::unlimitedMode()
 
 	while (1){      /**********************************游戏主循环******************************/
 
+		//背景图
+		putimage(0, 0, &background);
+
 		//死亡判定
 		if (kirito.getHp() <= 0)kirito.teleport(0,600);  
 		if (enemy.getHp() <= 0)enemy.teleport(0,600);
@@ -281,16 +285,17 @@ int mainFrame::unlimitedMode()
 			kirito.setSpd(kirito.getMovespd() - 1);
 		if (kirito.getMovespd()<0&&!kirito.jumpJudge())
 			kirito.setSpd(kirito.getMovespd() + 1);
+		
 		//kirito移动
-		if (kirito.runJudge())
-		kirito.moveX(&player,originx);
+		kirito.moveX();
+
 		//检测人物位置，移动屏幕
 		screenMove(kirito.getX(), kirito.getMovespd());
 
 		//当有键盘输入时执行
 		if (_kbhit()){
 
-			if (KEY_DOWN('J') && kirito.stillJudge()){                 //普通攻击"J"
+			if (KEY_DOWN('J') && kirito.stillJudge()&&(!kirito.coolingJudge())){                 //普通攻击"J"
 				kirito.meleeAttack(enemy.getX(),enemy.getHp(),enemy,&player,&enemyplayer,&skillpic250,&skillpic300,originx);
 				sound(2);
 			}
@@ -302,17 +307,17 @@ int mainFrame::unlimitedMode()
 
 					                     
 				if (KEY_DOWN('A')){                                       //按A向左移动
-					kirito.setDir(0);
-					if (kirito.getRunState()==0)
-						kirito.setRunState(1);
-					kirito.setSpd(-10);
-					if (KEY_DOWN(VK_SHIFT))
+					kirito.setDir(0);         //改变方向
+					kirito.setStill(-5);         //开始跑动
+					kirito.setRunState(1);	 //使runState为1
+					kirito.setSpd(-10);         //使kirito获得速度
+					if (KEY_DOWN(VK_SHIFT))     //配合shift食用更佳
 						kirito.setSpd(-15);
 					}
 				if (KEY_DOWN('D')){                                       //按D向右移动
-					kirito.setDir(1);
-					if (kirito.getRunState() == 0)
-						kirito.setRunState(1);
+					kirito.setDir(1);         //改变方向
+					kirito.setStill(-5);         //开始跑动
+					kirito.setRunState(1);	 //使runState为1
 					kirito.setSpd(10);
 					if (KEY_DOWN(VK_SHIFT))
 						kirito.setSpd(15);
@@ -325,17 +330,38 @@ int mainFrame::unlimitedMode()
 				}
 		}
 
-		//若kirito处于跳跃状态，进行Y值改变
+		//若kirito处于跳跃状态，进行Y值改变和绘图
 		if (kirito.jumpJudge()){    
 			kirito.jump();
-		}
+			switch (kirito.getDir()){
+			case 0:loadimage(&player, "pic/ll4.jpg"); break;
+			case 1:loadimage(&player, "pic/rr4.jpg"); break;
+			}
+			M_putimg(kirito.getX(), kirito.getY(), &player, WHITE, 100, originx);
 			
+		}
+		//若kirito处于跑动状态，进行跑步绘图
+		if (kirito.runJudge() && !kirito.jumpJudge() && !kirito.stillJudge()){
+			kirito.running(&player, originx);
+		}
 		//技能释放时的姿势和特效绘制
 		kirito.skillEffect(&skillpic250,&skillpic300,originx);
 	
-			
+		//between
+		if (!kirito.stillJudge()){
+			kirito.setStill(kirito.getStill() + 1);
+			M_putimg(kirito.getX(), kirito.getY(), &player, WHITE, 100, originx);
+		}
 		//静止时的putimg
-		if (kirito.stillJudge()){
+		if (kirito.stillJudge() && !(kirito.getSkillState()) && !kirito.jumpJudge()){
+			kirito.setRunState(1);
+			kirito.setSkillType(0);
+			kirito.setRun(0);
+			comboclear++;
+			if (comboclear == 20){
+				comboclear = 0;
+				kirito.setCombo(0);
+			}
 			stillput(kirito.getDir(),kirito.getX(),kirito.getY(),originx, &player,0);   //静止角色图片
 		}
 		
@@ -343,13 +369,16 @@ int mainFrame::unlimitedMode()
 			stillput(enemy.getDir(),enemy.getX(), enemy.getY(), originx, &enemyplayer,1);  //静止敌人图片
 		}
 
-		//如果kirito的still值小于等于0，则still每帧增加1
-		kirito.restill();
+		//冷却时间减少
+		if (kirito.coolingJudge())
+			kirito.coolingDown();
+		if (kirito.getSkillState() > 0)
+			kirito.skillStateMove(); 
 
         FlushBatchDraw();      //绘制结果输出
 		Sleep(inter);          //控制帧率
-		M_clear(pt, &background,background);    //清空画面
-
+		//M_clear(pt, &background,background);    //清空画面
+		cleardevice();
 
 	}//***************************************主循环结束*******************************************
 

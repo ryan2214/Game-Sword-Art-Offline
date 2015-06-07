@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 #include <graphics.h>
 #include <time.h>
 #include <conio.h>
