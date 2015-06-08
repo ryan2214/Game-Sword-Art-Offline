@@ -3,16 +3,29 @@
 
 #define KEY_DOWN(vk_c) (GetAsyncKeyState(vk_c)&0x8000?1:0)
 
+#define INIT_X 300
+#define INIT_Y 400
+#define INIT_DIR 1
+#define INIT_MAXHP 100
+#define INIT_HP 50
+#define INIT_ATTACK 10
+#define INIT_MOVESPD 0
+#define INIT_SKILLSTATE 0
+
+
+
 PLAYER::PLAYER()
 {
-	teleport(300, 400);            //初始化__PLAYER数据
-	setDir(1);
-	setMaxHp(100);
-	setHp(50);
-	setAttack(10);
-	setSpd(0);
-	setSkillState(0);
-	setSkillType(0);
+	x = 300;            //初始化__PLAYER数据
+	y = 400;
+	dir = 1;
+	maxhp = 100;
+	hp = 50;
+	attack = 10;
+
+	movespd = 0;
+	skillState = 0;
+	skillType = 0;
 	isRun = false;
 	isJump = false;
 	coolDown = 0;
@@ -169,7 +182,7 @@ void PLAYER::useSkill(int skillnum)
 	}
 }
 
-void PLAYER::meleeAttack(int enemyx, int enemyhp, PLAYER enemy, IMAGE *player, IMAGE *enemyplayer, IMAGE *skillpic250, IMAGE *skillpic300, int originx)
+void PLAYER::meleeAttack(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player, IMAGE *enemyplayer, IMAGE *skillpic250, IMAGE *skillpic300, int originx)
 {
 	skillType = 1;
 	skillState = 7;
@@ -179,12 +192,12 @@ void PLAYER::meleeAttack(int enemyx, int enemyhp, PLAYER enemy, IMAGE *player, I
 	still = -10;
 	switch (dir){
 	case 0:{
-		if ((x - enemy.getX()) <= 500 && (x - enemy.getX()) >= 0){         /****击中判断****/
-			enemy.setHp(enemy.getHp()-attack);                                  //击中造成伤害
-			enemy.setStill(-5);                                                 //击中造成僵直
-			enemy.teleport(enemy.getX() - 10,enemy.getY());                     //击中造成击退
+		if ((x - (*enemy).getX()) <= 500 && (x - (*enemy).getX()) >= 0){         /****击中判断****/
+			(*enemy).setHp((*enemy).getHp() - attack);                                  //击中造成伤害
+			//(*enemy).setStill(-15);                                                 //击中造成僵直
+			(*enemy).teleport((*enemy).getX() - 10, (*enemy).getY());                     //击中造成击退
 			loadimage(enemyplayer, "pic/enemylrunning3.jpg");                   //加载被击中时姿势
-			MAINFRAME::M_putimg(enemy.x, enemy.y, enemyplayer, WHITE, 100, originx); /****击中判断结束****/
+			MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, originx); /****击中判断结束****/
 		}
 
 		switch (combo){
@@ -209,36 +222,8 @@ void PLAYER::meleeAttack(int enemyx, int enemyhp, PLAYER enemy, IMAGE *player, I
 		}break;
 		}
 	}break;
-	case 1:{
-		if ((x - enemy.x) <= 100 && (x - enemy.x) >= 0){         /****击中判断****/
-			enemy.hp -= attack;                                         //击中造成伤害
-			enemy.still = -5;                                                  //击中造成僵直
-			enemy.x -= 10;                                                     //击中造成击退
-			/****击中判断结束****/
-		}
-
-		switch (combo){
-		case 1:{
-			loadimage(player, "pic/lattack1.jpg");
-			loadimage(skillpic250, "pic/lcut1.jpg");
-			mainFrame::M_putimg(x, y, player, WHITE, 100, originx);
-		}break;
-		case 2:{
-			loadimage(player, "pic/lattack2.jpg");
-			loadimage(skillpic250, "pic/lcut2.jpg");
-			x += 100;
-			if (x > 3016)x = 3016;
-			mainFrame::M_putimg(x, y, player, WHITE, 100, originx);
-		}break;
-		case 3:{
-			loadimage(player, "pic/lattack3.jpg");
-			loadimage(skillpic300, "pic/lcut3.jpg");
-			x += 10;
-			if (x > 3016)x = 3016;
-			mainFrame::M_putimg(x, y, player, WHITE, 100, originx);
-		}break;
-		}
-	}break;
+	
+	
 	}
 }
 

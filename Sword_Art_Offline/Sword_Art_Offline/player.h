@@ -16,7 +16,7 @@ public:
 	int getHp();            //获取当前hp
 	int getSkill();         //获取当前释放技能编号
 	int getCombo();         //获取当前连击值
-	void meleeAttack(int, int, PLAYER, IMAGE*, IMAGE*, IMAGE*, IMAGE*, int);     //普通の攻击
+	void meleeAttack(int*, int*, PLAYER*, IMAGE*, IMAGE*, IMAGE*, IMAGE*, int);     //普通の攻击
 	void damage(int);       //受到伤害
 	void jump();		    //跳跃
 	void running(IMAGE*, int);         //跑动

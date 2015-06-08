@@ -8,9 +8,11 @@
 #pragma comment (lib, "winmm.lib")
 #pragma comment (lib, "Vfw32.lib")
 
+#define INIT_ORIGINX 0
+
 MAINFRAME::MAINFRAME()
 {
-	originx = 0;
+	originx = INIT_ORIGINX;
 }
 
 MAINFRAME::~MAINFRAME() {}
@@ -122,7 +124,7 @@ void MAINFRAME::setOriginx(int num)
 
 void MAINFRAME::screenMove(int x, int spd)
 {
-	if (x > (500 - originx)){              //右移动边界
+	if (x > (700 - originx)){              //右移动边界
 		originx -= spd;              //屏幕区域位置改变
 	}
 	if (x < (120 - originx)){              //左移动边界
@@ -267,7 +269,7 @@ int MAINFRAME::unlimitedMode()
 	PLAYER enemy;
 	enemy.teleport(500, 400);
 	enemy.setDir(0);
-	enemy.setHp(20);
+	enemy.setHp(50);
 	//世界筑造
 		
 	//开始批量绘图
@@ -301,8 +303,9 @@ int MAINFRAME::unlimitedMode()
 		//当有键盘输入时执行
 		if (_kbhit()){
 
-			if (KEY_DOWN('J') && kirito.stillJudge()&&(!kirito.coolingJudge())){                 //普通攻击"J"
-				kirito.meleeAttack(enemy.getX(),enemy.getHp(),enemy,&player,&enemyplayer,&skillpic250,&skillpic300,originx);
+			if (KEY_DOWN('J') && kirito.stillJudge()&&(!kirito.coolingJudge())){ 
+				int ex = enemy.getX(), eh = enemy.getHp();																	//普通攻击"J"
+				kirito.meleeAttack(&ex, &eh, &enemy, &player, &enemyplayer, &skillpic250, &skillpic300, originx);
 				sound(2);
 			}
 
