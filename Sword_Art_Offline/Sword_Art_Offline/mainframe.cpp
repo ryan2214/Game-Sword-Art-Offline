@@ -267,6 +267,7 @@ int mainFrame::unlimitedMode()
 	__PLAYER enemy;
 	enemy.teleport(500, 400);
 	enemy.setDir(0);
+	enemy.setHp(20);
 	//世界筑造
 		
 	//开始批量绘图
@@ -291,6 +292,11 @@ int mainFrame::unlimitedMode()
 
 		//检测人物位置，移动屏幕
 		screenMove(kirito.getX(), kirito.getMovespd());
+
+		//静止敌人图片
+		if (enemy.stillJudge()){
+			stillput(enemy.getDir(), enemy.getX(), enemy.getY(), originx, &enemyplayer, 1); 
+		}
 
 		//当有键盘输入时执行
 		if (_kbhit()){
@@ -365,9 +371,7 @@ int mainFrame::unlimitedMode()
 			stillput(kirito.getDir(),kirito.getX(),kirito.getY(),originx, &player,0);   //静止角色图片
 		}
 		
-		if (enemy.stillJudge()){
-			stillput(enemy.getDir(),enemy.getX(), enemy.getY(), originx, &enemyplayer,1);  //静止敌人图片
-		}
+		
 
 		//冷却时间减少
 		if (kirito.coolingJudge())
