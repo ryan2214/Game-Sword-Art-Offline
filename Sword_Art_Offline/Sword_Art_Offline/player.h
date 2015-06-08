@@ -36,7 +36,7 @@ public:
 	void startRun();        //开始跑动
 	void coolingDown();     //冷却恢复
 	void skillStateMove();  //计算skillState
-	
+	int getMaxHp();         //获取最大hp
 
 	//初始化用函数
 	void teleport(int, int);//用于玩家传送
@@ -55,6 +55,8 @@ public:
 protected:		/****玩家属性****/
 	int hp;                 //当前生命值
 	int maxhp;              //最大生命值
+	int exp;				//经验值
+	int level;				//等级
 	int hpregen;            //每帧战斗回复hp（注:FPS=100）
 	int movespd;            //每次移动像素数
 	int attack;             //攻击力

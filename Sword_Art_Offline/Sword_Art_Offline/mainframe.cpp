@@ -125,10 +125,10 @@ void MAINFRAME::setOriginx(int num)
 void MAINFRAME::screenMove(int x, int spd)
 {
 	if (x > (700 - originx)){              //右移动边界
-		originx -= spd;              //屏幕区域位置改变
+		originx -= abs(spd);              //屏幕区域位置改变
 	}
-	if (x < (120 - originx)){              //左移动边界
-		originx -=spd;
+	if (x < (200 - originx)){              //左移动边界
+		originx +=abs(spd);
 	}
 
 	if (originx > 0)originx = 0;           //限制originx>=0
@@ -250,9 +250,7 @@ int MAINFRAME::unlimitedMode()
 	setorigin(originx, 0);//设置初始原点
 
 	// 加载通用图片
-	loadimage(&welcome, "pic/welcome.jpg");
 	loadimage(&background, "pic/blank.jpg");	// 请确保该图片是 1072*600 像素
-	loadimage(&hpUI, "pic/hp_bar.jpg");
 	loadimage(&wbackground, "pic/whitebk.jpg");
 
 	// 随机BGM
@@ -262,14 +260,17 @@ int MAINFRAME::unlimitedMode()
 	//计算时间用参数
 	int tik = 0;
 	int comboclear = 0;
+	int mobRefresh = 0;
 
 	//复活吧，我的勇士
 	PLAYER kirito;
 	//为你而战，我的女士
 	PLAYER enemy;
-	enemy.teleport(500, 400);
-	enemy.setDir(0);
-	enemy.setHp(50);
+	int newx = (rand() % 3016);
+	enemy.teleport(newx, 400);
+	int newdir = (rand() % 2);
+	enemy.setDir(newdir);
+	enemy.setHp(100);
 	//世界筑造
 		
 	//开始批量绘图
@@ -281,14 +282,32 @@ int MAINFRAME::unlimitedMode()
 		putimage(0, 0, &background);
 
 		//死亡判定
-		if (kirito.getHp() <= 0)kirito.teleport(0,600);  
-		if (enemy.getHp() <= 0)enemy.teleport(0,600);
+		if (kirito.getHp() <= 0)kirito.teleport(0,-200);  
+		if (enemy.getHp() <= 0&&mobRefresh==0){
+			enemy.teleport(0, -200);
+			mobRefresh = 100;
+		}
+		//怪物刷新判定
+		if (mobRefresh > 0){
+			mobRefresh--;
+			if (mobRefresh == 1){
+				int newx = (rand() % 3016);
+				enemy.teleport(newx, 400);
+				int newdir = (rand() % 2);
+				enemy.setDir(newdir);
+				enemy.setHp(100);
+			}
+		}
 		//摩擦力
 		if(kirito.getMovespd()>0&&!kirito.jumpJudge())
 			kirito.setSpd(kirito.getMovespd() - 1);
 		if (kirito.getMovespd()<0&&!kirito.jumpJudge())
 			kirito.setSpd(kirito.getMovespd() + 1);
-		
+		//HPUI
+		int khp = kirito.getHp(), kmhp = kirito.getMaxHp();
+		mainFrame::hpUI(&khp, &kmhp);
+		int ehp = enemy.getHp(), emhp = enemy.getMaxHp(), ex = enemy.getX(),ey=enemy.getY();
+		enemyHpUI(&ehp, &emhp, &ex,&ey);
 		//kirito移动
 		kirito.moveX();
 
@@ -465,12 +484,45 @@ void MAINFRAME::gameExit()
 	closegraph();
 }
 
+void MAINFRAME::hpUI(int *hp, int *maxHp)
+{
+	IMAGE hpTIAO, hpCAO;
+	float hpRatio = (1.0*(*hp)) / (1.0*(*maxHp));
+	int hpPix = hpRatio * 258;
+
+	if (hpRatio > 0.66)								//根据血量加载适应颜色的hpTIAO
+		loadimage(&hpTIAO, "pic/hp_green.jpg",hpPix,24,true);
+	if (hpRatio > 0.33&&hpRatio <= 0.66)
+		loadimage(&hpTIAO, "pic/hp_yellow.jpg", hpPix, 24, true);
+	if (hpRatio <= 0.33)
+		loadimage(&hpTIAO, "pic/hp_red.jpg", hpPix, 24, true);
+	loadimage(&hpCAO, "pic/hp_bar.jpg");			//加载hpCAO
+	//图像输出
+	M_putimg(75-originx, 12, &hpTIAO, WHITE , 100 , originx);
+	M_putimg(0 - originx, 0, &hpCAO, WHITE, 80, originx);
+}
+
+void MAINFRAME::enemyHpUI(int *hp, int *maxHp,int *x,int *y)
+{
+	IMAGE hpTIAO;
+	float hpRatio = (1.0*(*hp)) / (1.0*(*maxHp));
+	int hpPix = hpRatio * 180;
+	if (hpRatio > 0.66)								//根据血量加载适应颜色的hpTIAO
+		loadimage(&hpTIAO, "pic/hp_enemy_green.jpg", hpPix, 24, true);
+	if (hpRatio > 0.33&&hpRatio <= 0.66)
+		loadimage(&hpTIAO, "pic/hp_enemy_yellow.jpg", hpPix, 24, true);
+	if (hpRatio <= 0.33)
+		loadimage(&hpTIAO, "pic/hp_enemy_red.jpg", hpPix, 24, true);
+	//图像输出
+	M_putimg(*x, *y-20, &hpTIAO, WHITE, 100, originx);
+}
+
 void MAINFRAME::M_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int tp, int originx)
 {
 	//排除颜色avoid_color,容差为deviation；透明度tp(transparency)从0到100
 	setorigin(originx, 0);
 	int x, y, num;
-	int deviation = 10;
+	int deviation = 50;
 	int R, G, B;//记录贴图某点色彩
 	//记录排除颜色色彩
 	int avoid_r = GetRValue(avoid_color);

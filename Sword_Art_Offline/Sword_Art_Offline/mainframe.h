@@ -25,6 +25,8 @@ public:					/*功能*/
 	void setOriginx(int);			 //重设绘图原点
 	int getOriginx();				 //获取绘图原点
 	void screenMove(int,int);		 //屏幕适应性移动
+	void hpUI(int*, int*);			 //kiritoのHPのUI
+	void enemyHpUI(int*, int*,int*,int*); //敌人のHP
 	void stillput(bool,int,int,int, IMAGE*,int);		 //静止时图片加载
 	void skillEffect(IMAGE, IMAGE, IMAGE);		   	//技能特效加载
 	static void M_putimg(int,int,IMAGE*,int,int,int);//绘制图片（背景透明&透明度可调）
