@@ -8,12 +8,12 @@
 #pragma comment (lib, "winmm.lib")
 #pragma comment (lib, "Vfw32.lib")
 
-__MAINFRAME::__MAINFRAME()
+MAINFRAME::MAINFRAME()
 {
 	originx = 0;
 }
 
-__MAINFRAME::~__MAINFRAME() {}
+MAINFRAME::~MAINFRAME() {}
 
 #define KEY_DOWN(vk_c) (GetAsyncKeyState(vk_c)&0x8000?1:0)  //检测按键和鼠标点击
 
@@ -23,7 +23,7 @@ __MAINFRAME::~__MAINFRAME() {}
 
 void main()
 {
-	__MAINFRAME mainFrame;
+	MAINFRAME mainFrame;
 	mainFrame.welcomeInit();
 }
 
@@ -63,7 +63,7 @@ void M_clear(POINT pt, IMAGE *bk, IMAGE pic)//pt上一个动作图片的输出坐标，bk背景
 	putimage(pt.x, pt.y, &clear);//输出
 }
 
-void __MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int type)
+void MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int type)
 {
 	switch (type){
 	case 0:{
@@ -94,13 +94,13 @@ void __MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int type)
 	}
 }
 
-void __MAINFRAME::skillEffect(IMAGE player, IMAGE pic250, IMAGE pic300)
+void MAINFRAME::skillEffect(IMAGE player, IMAGE pic250, IMAGE pic300)
 {
 
 }
 
 
-void mainFrame::copy_img(IMAGE* img1, IMAGE* img2)
+void MAINFRAME::copy_img(IMAGE* img1, IMAGE* img2)
 {
 	//copy img2 to img1
 	IMAGE* now_working = GetWorkingImage();
@@ -110,17 +110,17 @@ void mainFrame::copy_img(IMAGE* img1, IMAGE* img2)
 	SetWorkingImage(now_working);
 }
 
-int mainFrame::getOriginx()
+int MAINFRAME::getOriginx()
 {
 	return originx;
 }
 
-void mainFrame::setOriginx(int num)
+void MAINFRAME::setOriginx(int num)
 {
 	originx = num;
 }
 
-void mainFrame::screenMove(int x,int spd)
+void MAINFRAME::screenMove(int x, int spd)
 {
 	if (x > (500 - originx)){              //右移动边界
 		originx -= spd;              //屏幕区域位置改变
@@ -134,7 +134,7 @@ void mainFrame::screenMove(int x,int spd)
 	setorigin(originx, 0);                 //重设原点
 }
 
-void mainFrame::welcomeInit()
+void MAINFRAME::welcomeInit()
 {
 	bool flagstart = false;
 	bool flagsound = true;
@@ -226,7 +226,7 @@ void mainFrame::welcomeInit()
 	closegraph();
 }
 
-int mainFrame::unlimitedMode()
+int MAINFRAME::unlimitedMode()
 {
 	IMAGE background, wbackground, welcome, player, skillpic250, skillpic300, enemyplayer, hpUI;
 	POINT pt;    //定义清理图像指针
@@ -262,9 +262,9 @@ int mainFrame::unlimitedMode()
 	int comboclear = 0;
 
 	//复活吧，我的勇士
-	__PLAYER kirito;
+	PLAYER kirito;
 	//为你而战，我的女士
-	__PLAYER enemy;
+	PLAYER enemy;
 	enemy.teleport(500, 400);
 	enemy.setDir(0);
 	enemy.setHp(20);
@@ -390,7 +390,7 @@ int mainFrame::unlimitedMode()
 	
 }
 
-void mainFrame::bgm(int song)
+void MAINFRAME::bgm(int song)
 {
 	switch (song){
 	case 0:{
@@ -434,7 +434,7 @@ void mainFrame::bgm(int song)
 	}
 }
 
-void mainFrame::sound(int soundtype)
+void MAINFRAME::sound(int soundtype)
 {
 	switch (soundtype){
 	case 0:{
@@ -456,13 +456,13 @@ void mainFrame::sound(int soundtype)
 	}
 }
 
-void mainFrame::gameExit()
+void MAINFRAME::gameExit()
 {
 	bgm(9);
 	closegraph();
 }
 
-void mainFrame::M_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int tp, int originx)
+void MAINFRAME::M_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int tp, int originx)
 {
 	//排除颜色avoid_color,容差为deviation；透明度tp(transparency)从0到100
 	setorigin(originx, 0);

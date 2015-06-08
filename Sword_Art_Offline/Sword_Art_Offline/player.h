@@ -3,11 +3,11 @@
 
 using namespace std;
 
-typedef class __PLAYER
+typedef class PLAYER
 {
 public:							/*构造析构函数*/
-	__PLAYER();				//默认是空
-	~__PLAYER();
+	PLAYER();				//默认是空
+	~PLAYER();
 public:
 	int getX();		     //获取位置
 	int getY();
@@ -16,7 +16,7 @@ public:
 	int getHp();            //获取当前hp
 	int getSkill();         //获取当前释放技能编号
 	int getCombo();         //获取当前连击值
-	void meleeAttack(int, int, __PLAYER, IMAGE*, IMAGE*, IMAGE*, IMAGE*, int);     //普通の攻击
+	void meleeAttack(int, int, PLAYER, IMAGE*, IMAGE*, IMAGE*, IMAGE*, int);     //普通の攻击
 	void damage(int);       //受到伤害
 	void jump();		    //跳跃
 	void running(IMAGE*, int);         //跑动

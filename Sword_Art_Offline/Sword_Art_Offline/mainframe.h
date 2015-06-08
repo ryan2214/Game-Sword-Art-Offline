@@ -10,11 +10,11 @@
 
 using namespace std;
 
-typedef class __MAINFRAME
+typedef class MAINFRAME
 {
 public:					/*构造、析构函数*/
-	__MAINFRAME();
-	~__MAINFRAME();
+	MAINFRAME();
+	~MAINFRAME();
 public:					/*功能*/
 	void welcomeInit();				 //初始化欢迎界面
 	//void saoMode();				 //SAO模式
@@ -31,5 +31,5 @@ public:					/*功能*/
 	static void copy_img(IMAGE*, IMAGE*);			//复制图片，机巧图片不会受伤
 protected:
 	int originx;
-	__PLAYER kirito;	     //玩家数据库
+	PLAYER kirito;	     //玩家数据库
 }mainFrame;
