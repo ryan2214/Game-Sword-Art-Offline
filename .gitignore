@@ -1,2 +1,4 @@
 #photoshop project
 *.psd
+#picture unused
+*.png
