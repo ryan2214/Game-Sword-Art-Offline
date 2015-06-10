@@ -96,12 +96,6 @@ void MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int type)
 	}
 }
 
-void MAINFRAME::skillEffect(IMAGE player, IMAGE pic250, IMAGE pic300)
-{
-
-}
-
-
 void MAINFRAME::copy_img(IMAGE* img1, IMAGE* img2)
 {
 	//copy img2 to img1
@@ -237,7 +231,7 @@ int MAINFRAME::unlimitedMode()
 	
 	//link start!
 	//HWND hwnd = MCIWndCreate(GetHWnd(), NULL, WS_CHILD | WS_VISIBLE | MCIWNDF_NOMENU | MCIWNDF_NOPLAYBAR, NULL);
-	////MCIWndOpen(hwnd, "avi\\loadgame.wmv", NULL);
+	//MCIWndOpen(hwnd, "avi\\loadgame.wmv", NULL);
 	//MCIWndPlay(hwnd);
 	//Sleep(17000);
 
@@ -266,9 +260,9 @@ int MAINFRAME::unlimitedMode()
 	PLAYER kirito;
 	//为你而战，我的女士
 	PLAYER enemy;
-	int newx = (rand() % 3016);
+	int newx = (rand() % 3016); //随机新敌人的X
 	enemy.teleport(newx, 400);
-	int newdir = (rand() % 2);
+	int newdir = (rand() % 2);  //随机新敌人的朝向
 	enemy.setDir(newdir);
 	enemy.setHp(100);
 	//世界筑造
@@ -298,11 +292,15 @@ int MAINFRAME::unlimitedMode()
 				enemy.setHp(100);
 			}
 		}
-		//摩擦力
+		//摩擦力(Kirito和enemy)
 		if(kirito.getMovespd()>0&&!kirito.jumpJudge())
 			kirito.setSpd(kirito.getMovespd() - 1);
 		if (kirito.getMovespd()<0&&!kirito.jumpJudge())
 			kirito.setSpd(kirito.getMovespd() + 1);
+		if (enemy.getMovespd()>0 && !enemy.jumpJudge())
+			enemy.setSpd(enemy.getMovespd() - 1);
+		if (enemy.getMovespd()<0 && !enemy.jumpJudge())
+			enemy.setSpd(enemy.getMovespd() + 1);
 		//HPUI
 		int khp = kirito.getHp(), kmhp = kirito.getMaxHp();
 		mainFrame::hpUI(&khp, &kmhp);
@@ -310,7 +308,7 @@ int MAINFRAME::unlimitedMode()
 		enemyHpUI(&ehp, &emhp, &ex,&ey);
 		//kirito移动
 		kirito.moveX();
-
+		enemy.moveX();
 		//检测人物位置，移动屏幕
 		screenMove(kirito.getX(), kirito.getMovespd());
 
@@ -352,7 +350,7 @@ int MAINFRAME::unlimitedMode()
 					}
 					
 				if (KEY_DOWN(VK_ESCAPE)){
-					bgm(9);
+					bgm(10);
 					return 0;
 				}//ESC退出
 				}
@@ -448,7 +446,9 @@ void MAINFRAME::bgm(int song)
 		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
 
-
+	case 10:{
+		mciSendString(TEXT("close MySong"), NULL, 0, NULL);
+	}
 	case 9:{
 		mciSendString(TEXT("stop MySong"), NULL, 0, NULL);
 	}
@@ -471,9 +471,7 @@ void MAINFRAME::sound(int soundtype)
 	case 3:{
 		PlaySound("sound/welcome.wav", NULL, SND_FILENAME | SND_ASYNC);
 	}break;
-	case 9:{
-		mciSendString(TEXT("stop MySong"), NULL, 0, NULL);
-	}
+	
 	default:break;
 	}
 }
@@ -522,7 +520,7 @@ void MAINFRAME::M_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int t
 	//排除颜色avoid_color,容差为deviation；透明度tp(transparency)从0到100
 	setorigin(originx, 0);
 	int x, y, num;
-	int deviation = 50;
+	int deviation = 100;
 	int R, G, B;//记录贴图某点色彩
 	//记录排除颜色色彩
 	int avoid_r = GetRValue(avoid_color);

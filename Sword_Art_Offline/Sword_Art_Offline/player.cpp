@@ -204,7 +204,7 @@ void PLAYER::meleeAttack(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player
 		if ((x - (*enemy).getX()) <= 200 && (x - (*enemy).getX()) >= 0){         /****击中判断****/
 			(*enemy).setHp((*enemy).getHp() - attack);                                  //击中造成伤害
 			//(*enemy).setStill(-15);                                                 //击中造成僵直
-			(*enemy).teleport((*enemy).getX() - 30, (*enemy).getY());                     //击中造成击退
+			(*enemy).setSpd(-5);												   //击中造成击退
 			loadimage(enemyplayer, "pic/enemylrunning3.jpg");                   //加载被击中时姿势
 			MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, originx); /****击中判断结束****/
 		}
@@ -218,7 +218,8 @@ void PLAYER::meleeAttack(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player
 		case 2:{
 			loadimage(player, "pic/lattack2.jpg");
 			loadimage(skillpic250, "pic/lcut2.jpg");
-			movespd = -14;
+			x -= 50;
+			movespd = -10;
 			if (x < 10)x = 10;
 			MAINFRAME::M_putimg(x, y, player, WHITE, 100, originx);
 		}break;
@@ -235,7 +236,7 @@ void PLAYER::meleeAttack(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player
 		if (((*enemy).getX()-x) <= 200 && ((*enemy).getX()-x) >= 0){         /****击中判断****/
 			(*enemy).setHp((*enemy).getHp() - attack);                                  //击中造成伤害
 			//(*enemy).setStill(-15);                                                 //击中造成僵直
-			(*enemy).teleport((*enemy).getX() + 30, (*enemy).getY());                     //击中造成击退
+			(*enemy).setSpd(5);                    //击中造成击退
 			loadimage(enemyplayer, "pic/enemylrunning3.jpg");                   //加载被击中时姿势
 			MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, originx); /****击中判断结束****/
 		}
@@ -249,7 +250,8 @@ void PLAYER::meleeAttack(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player
 		case 2:{
 			loadimage(player, "pic/rattack2.jpg");
 			loadimage(skillpic250, "pic/rcut2.jpg");
-			movespd = 14;
+			x += 50;
+			movespd = 10;
 			if (x < 10)x = 10;
 			MAINFRAME::M_putimg(x, y, player, WHITE, 100, originx);
 		}break;

@@ -28,7 +28,6 @@ public:					/*功能*/
 	void hpUI(int*, int*);			 //kiritoのHPのUI
 	void enemyHpUI(int*, int*,int*,int*); //敌人のHP
 	void stillput(bool,int,int,int, IMAGE*,int);		 //静止时图片加载
-	void skillEffect(IMAGE, IMAGE, IMAGE);		   	//技能特效加载
 	static void M_putimg(int,int,IMAGE*,int,int,int);//绘制图片（背景透明&透明度可调）
 	static void copy_img(IMAGE*, IMAGE*);			//复制图片，机巧图片不会受伤
 protected:
