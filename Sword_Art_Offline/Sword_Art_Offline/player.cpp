@@ -22,6 +22,9 @@
 #define INIT_EXP 0
 #define INIT_LEVEL 1
 
+#define INIT_SONICLEAP_RANGE 500
+#define INIT_MELEEATTACK_RANGE 200
+
 PLAYER::PLAYER()
 {
 	x = INIT_X;            //初始化__PLAYER数据
@@ -103,10 +106,10 @@ void PLAYER::running(IMAGE* player, int ox)
 		if (run >= 12)runState = 4;
 		if (run >= 16)runState = 1;
 		switch (runState){
-		case 1:loadimage(player, "pic/rr1.jpg"); break;
-		case 2:loadimage(player, "pic/rr2.jpg"); break;
-		case 3:loadimage(player, "pic/rr3.jpg"); break;
-		case 4:loadimage(player, "pic/rr4.jpg"); break;
+		case 1:loadimage(player, "pic/rr1.jpg",180,185,true); break;
+		case 2:loadimage(player, "pic/rr2.jpg", 180, 185, true); break;
+		case 3:loadimage(player, "pic/rr3.jpg", 180, 185, true); break;
+		case 4:loadimage(player, "pic/rr4.jpg", 180, 185, true); break;
 		}
 		MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
 	}break;
@@ -119,10 +122,10 @@ void PLAYER::running(IMAGE* player, int ox)
 		if (run >= 12)runState = 4;
 		if (run >= 16)runState = 1;
 		switch (runState){
-		case 1:loadimage(player, "pic/ll1.jpg"); break;
-		case 2:loadimage(player, "pic/ll2.jpg"); break;
-		case 3:loadimage(player, "pic/ll3.jpg"); break;
-		case 4:loadimage(player, "pic/ll4.jpg"); break;
+		case 1:loadimage(player, "pic/ll1.jpg", 180, 185, true); break;
+		case 2:loadimage(player, "pic/ll2.jpg", 180, 185, true); break;
+		case 3:loadimage(player, "pic/ll3.jpg", 180, 185, true); break;
+		case 4:loadimage(player, "pic/ll4.jpg", 180, 185, true); break;
 		}
 		MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
 	}break;
@@ -201,7 +204,7 @@ void PLAYER::meleeAttack(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player
 	still = -10;
 	switch (dir){
 	case 0:{
-		if ((x - (*enemy).getX()) <= 200 && (x - (*enemy).getX()) >= 0){         /****击中判断****/
+		if ((x - (*enemy).getX()) <= INIT_MELEEATTACK_RANGE && (x - (*enemy).getX()) >= 0){         /****击中判断****/
 			(*enemy).setHp((*enemy).getHp() - attack);                                  //击中造成伤害
 			//(*enemy).setStill(-15);                                                 //击中造成僵直
 			(*enemy).setSpd(-5);												   //击中造成击退
@@ -233,7 +236,7 @@ void PLAYER::meleeAttack(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player
 		}
 	}break;
 	case 1:{
-		if (((*enemy).getX()-x) <= 200 && ((*enemy).getX()-x) >= 0){         /****击中判断****/
+		if (((*enemy).getX() - x) <= INIT_MELEEATTACK_RANGE && ((*enemy).getX() - x) >= 0){         /****击中判断****/
 			(*enemy).setHp((*enemy).getHp() - attack);                                  //击中造成伤害
 			//(*enemy).setStill(-15);                                                 //击中造成僵直
 			(*enemy).setSpd(5);                    //击中造成击退
@@ -268,6 +271,53 @@ void PLAYER::meleeAttack(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player
 	}
 }
 
+void PLAYER::sonicLeap(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player, IMAGE *enemyplayer, IMAGE *skillpic250, IMAGE *skillpic300, int originx)
+{
+	skillType = 2;
+	skillState = 25;
+	coolDown = 25;
+	//攻击判定
+	combo++;
+	still = -25;
+	switch (dir){
+	case 0:{
+		if ((x - (*enemy).getX()) <= INIT_SONICLEAP_RANGE && (x - (*enemy).getX()) >= 0){         /****击中判断****/
+			(*enemy).setHp((*enemy).getHp() - attack);                                  //击中造成伤害
+			//(*enemy).setStill(-15);                                                 //击中造成僵直
+			(*enemy).setSpd(0);												   //击中造成僵直
+			loadimage(enemyplayer, "pic/enemylrunning3.jpg");                   //加载被击中时姿势
+			MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, originx); /****击中判断结束****/
+		}
+
+		switch (combo){
+		case 1:{
+			loadimage(player, "pic/lsonicleap-2.jpg");
+			loadimage(skillpic250, "pic/lsonicleap-1.jpg");
+			MAINFRAME::M_putimg(x, y, player, WHITE, 100, originx);
+		}break;
+		}
+	}break;
+	case 1:{
+		if (((*enemy).getX() - x) <= INIT_SONICLEAP_RANGE && ((*enemy).getX() - x) >= 0){         /****击中判断****/
+			(*enemy).setHp((*enemy).getHp() - attack);                                  //击中造成伤害
+			//(*enemy).setStill(-15);                                                 //击中造成僵直
+			(*enemy).setSpd(0);                    //击中造成僵直
+			loadimage(enemyplayer, "pic/enemylrunning3.jpg");                   //加载被击中时姿势
+			MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, originx); /****击中判断结束****/
+		}
+
+		switch (combo){
+		case 1:{
+			loadimage(player, "pic/rsonicleap-2.jpg");
+			loadimage(skillpic250, "pic/rsonicleap-1.jpg");
+			MAINFRAME::M_putimg(x, y, player, WHITE, 100, originx);
+		}break;
+		}
+	}break;
+
+	}
+}
+
 int PLAYER::getStill()
 {
 	return still;
@@ -294,7 +344,7 @@ int PLAYER::getRunState()
 	return runState;
 }
 
-void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, int ox)
+void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300,IMAGE *player, int ox)
 {
 	switch (skillType){               //判断技能种类(0为无技能)
 	case 1:{                            //普通攻击
@@ -304,7 +354,7 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, int ox)
 			case 1:{
 				y -= 25;                //技能图片位置修正
 				x -= 85;
-				loadimage(skillpic250, "pic/lcut1.jpg");
+				loadimage(skillpic250, "pic/lcut1.jpg",250,250,true);
 				MAINFRAME::M_putimg(x, y, skillpic250, WHITE, 10 * skillState, ox);
 				y += 25;                 //技能图片位置修正后还原
 				x += 85;
@@ -312,7 +362,7 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, int ox)
 			case 2:{
 				y -= 50;
 				x -= 65;
-				loadimage(skillpic250, "pic/lcut2.jpg");
+				loadimage(skillpic250, "pic/lcut2.jpg", 250, 250, true);
 				MAINFRAME::M_putimg(x, y, skillpic250, WHITE, 10 * skillState, ox);
 				y += 50;
 				x += 65;
@@ -320,11 +370,83 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, int ox)
 			case 3:{
 				y -= 80;
 				x -= 105;
-				loadimage(skillpic300, "pic/lcut3.jpg");
+				loadimage(skillpic300, "pic/lcut3.jpg", 300, 300, true);
 				MAINFRAME::M_putimg(x, y, skillpic300, WHITE, 10 * skillState, ox);
 				y += 80;
 				x += 105;
 				if (combo == 3 && skillState == 1)combo = 0;
+			}break;
+			}
+		}break;
+		case 1:{
+			switch (combo){                 //根据combo判断技能图片
+			case 1:{
+				y -= 25;                //技能图片位置修正
+				x += 0;
+				loadimage(skillpic250, "pic/rcut1.jpg", 250, 250, true);
+				MAINFRAME::M_putimg(x, y, skillpic250, WHITE, 10 * skillState, ox);
+				y += 25;                 //技能图片位置修正后还原
+				x -= 0;
+			}break;
+			case 2:{
+				y -= 47;
+				x += 0;
+				loadimage(skillpic250, "pic/rcut2.jpg", 250, 250, true);
+				MAINFRAME::M_putimg(x, y, skillpic250, WHITE, 10 * skillState, ox);
+				y += 47;
+				x -= 0;
+			}break;
+			case 3:{
+				y -= 82;
+				x -= 0;
+				loadimage(skillpic300, "pic/rcut3.jpg", 300, 300, true);
+				MAINFRAME::M_putimg(x, y, skillpic300, WHITE, 10 * skillState, ox);
+				y += 82;
+				x += 0;
+				if (combo == 3 && skillState == 1)combo = 0;
+			}break;
+			}
+		}break;
+		}
+			
+	}break;//技能1结束
+
+	case 2:{                            //音速冲击
+		switch (dir){
+		case 0:{
+			if (skillState <= 15)combo = 2;  //由skillState确定combo
+			if (skillState <= 10)combo = 3;
+			switch (combo){                 //根据combo判断技能图片
+			case 1:{
+				                //技能图片位置修正
+				loadimage(skillpic250, "pic/lsonicleap-1.jpg",180,185,true);
+				MAINFRAME::M_putimg(x, y, skillpic250, WHITE, 10 * (skillState-15), ox);
+				                 //技能图片位置修正后还原
+			}break;
+			case 2:{
+				if (skillState == 15)x -= 110;
+				loadimage(player, "pic/lsonicleap-3.jpg", 354, 185, true);
+				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
+				
+				x -= 340;
+				loadimage(skillpic300, "pic/sonicleap_flash.jpg",340,185,true);
+				MAINFRAME::M_putimg(x, y, skillpic300, WHITE, 10 * (skillState-5), ox);
+				movespd = -100;
+				x += 340;
+			}break;
+			case 3:{
+				if (skillState == 10)x-=110;
+
+				loadimage(player, "pic/lsonicleap-4.jpg", 354, 185, true);
+				
+				movespd = -2;
+				if (skillState == 1){
+					combo = 0;
+					x += 110;
+				}
+				if (skillState == 1||skillState == 0)
+					loadimage(player, "pic/lstill.jpg", 180, 185, true);
+				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
 			}break;
 			}
 		}break;
@@ -358,8 +480,8 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, int ox)
 			}
 		}break;
 		}
-			
-	}//技能1结束
+
+	}//技能2结束
 	}
 }
 

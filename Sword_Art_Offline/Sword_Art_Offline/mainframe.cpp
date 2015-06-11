@@ -71,11 +71,11 @@ void MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int type)
 	case 0:{
 		switch (dir){
 		case 0:{
-			loadimage(player, "pic/lstill.jpg");
+			loadimage(player, "pic/lstill.jpg",180,185,true);
 			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
 		}break;
 		case 1:{
-			loadimage(player, "pic/rstill.jpg");
+			loadimage(player, "pic/rstill.jpg", 180, 185, true);
 			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
 		}break;
 		}
@@ -83,11 +83,11 @@ void MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int type)
 	case 1:{
 		switch (dir){
 		case 0:{
-			loadimage(player, "pic/les.jpg");
+			loadimage(player, "pic/les.jpg", 180, 185, true);
 			mainFrame::M_putimg(x, y,player, WHITE, 100, ox);
 		}break;
 		case 1:{
-			loadimage(player, "pic/res.jpg");
+			loadimage(player, "pic/res.jpg", 180, 185, true);
 			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
 		}break;
 		}
@@ -326,12 +326,16 @@ int MAINFRAME::unlimitedMode()
 				sound(2);
 			}
 
+			if (KEY_DOWN('K') && kirito.stillJudge() && (!kirito.coolingJudge())){
+				int ex = enemy.getX(), eh = enemy.getHp();																	//音速冲击"K"
+				kirito.sonicLeap(&ex, &eh, &enemy, &player, &enemyplayer, &skillpic250, &skillpic300, originx);
+				sound(2);
+			}
 			else{
 				if (KEY_DOWN(VK_SPACE) && (!kirito.jumpJudge())){        //按Space跳跃
 					kirito.startJump();
 				}
-
-					                     
+	                     
 				if (KEY_DOWN('A')){                                       //按A向左移动
 					kirito.setDir(0);         //改变方向
 					kirito.setStill(-5);         //开始跑动
@@ -371,7 +375,7 @@ int MAINFRAME::unlimitedMode()
 			kirito.running(&player, originx);
 		}
 		//技能释放时的姿势和特效绘制
-		kirito.skillEffect(&skillpic250,&skillpic300,originx);
+		kirito.skillEffect(&skillpic250,&skillpic300,&player,originx);
 	
 		//between
 		if (!kirito.stillJudge()){

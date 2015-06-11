@@ -17,6 +17,7 @@ public:
 	int getSkill();         //获取当前释放技能编号
 	int getCombo();         //获取当前连击值
 	void meleeAttack(int*, int*, PLAYER*, IMAGE*, IMAGE*, IMAGE*, IMAGE*, int);     //普通の攻击
+	void sonicLeap(int*, int*, PLAYER*, IMAGE*, IMAGE*, IMAGE*, IMAGE*, int);		//音速冲击
 	void damage(int);       //受到伤害
 	void jump();		    //跳跃
 	void running(IMAGE*, int);         //跑动
@@ -32,7 +33,7 @@ public:
 	void restill();         //恢复静止
 	int getSkillState();    //获取技能状态
 	int getRunState();      //获取跑动状态
-	void skillEffect(IMAGE*,IMAGE*,int);     //给技能加特技
+	void skillEffect(IMAGE*,IMAGE*,IMAGE*,int);     //给技能加特技
 	void startRun();        //开始跑动
 	void coolingDown();     //冷却恢复
 	void skillStateMove();  //计算skillState
