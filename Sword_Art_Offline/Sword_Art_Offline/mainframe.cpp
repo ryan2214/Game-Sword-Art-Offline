@@ -9,10 +9,22 @@
 #pragma comment (lib, "Vfw32.lib")
 
 #define INIT_ORIGINX 0
+#define INIT_FLOOR 1
+#define INIT_ROOM 1
+#define INIT_LEFTLIMIT 0
+#define INIT_RIGHTLIMIT 3216
+#define INIT_BGM true
+#define INIT_SOUND true
 
 MAINFRAME::MAINFRAME()
 {
 	originx = INIT_ORIGINX;
+	floor = INIT_FLOOR;
+	room = INIT_ROOM;
+	leftlimit = INIT_LEFTLIMIT;
+	rightlimit = INIT_RIGHTLIMIT;
+	BGM = INIT_BGM;
+	SOUND = INIT_SOUND;
 }
 
 MAINFRAME::~MAINFRAME() {}
@@ -126,7 +138,7 @@ void MAINFRAME::screenMove(int x, int spd)
 	}
 
 	if (originx > 0)originx = 0;           //限制originx>=0
-	if (originx < -2144)originx = -2144;     //限制originx<=2144
+	if (originx < -(rightlimit - 1072))originx = -(rightlimit - 1072);     //限制originx<=2144
 	setorigin(originx, 0);                 //重设原点
 }
 
@@ -212,7 +224,7 @@ void MAINFRAME::welcomeInit()
 			bgm(9);
 		    unlimitedMode();
 		}
-		if (KEY_DOWN(VK_ESCAPE)){           //按ESC键退出
+		if (KEY_DOWN('Q')){           //按Q键退出
 			bgm(9);
 			gameExit();
 		}
@@ -222,7 +234,159 @@ void MAINFRAME::welcomeInit()
 	closegraph();
 }
 
-int MAINFRAME::unlimitedMode()
+void MAINFRAME::sceneChange(PLAYER *player,bool dir,IMAGE *background)
+{
+	
+	switch (dir)
+	{
+	case 0:{
+		room--;
+		if (room < 0){
+			room = 0;
+			break;
+		}
+		
+		switch (room){
+		case 0:{
+			loadimage(background, "pic/composer.jpg");
+			rightlimit = 1072;
+			bgm(10);
+			bgm(8);
+		}break;
+		case 1:{
+			loadimage(background, "pic/blank.jpg");
+			rightlimit = 3216;
+			bgm(10);
+			int num1 = rand() % 2;
+			switch (num1){
+			case 0:bgm(2); break;
+			case 1:bgm(6); break;
+			}
+		}break;
+		case 2:{
+			loadimage(background, "pic/underground.jpg");
+			rightlimit = 2144;
+			bgm(10);
+			int num2 = rand() % 3;
+			switch (num2){
+			case 0:bgm(1); break;
+			case 1:bgm(3); break;
+			case 2:bgm(7); break;
+			}
+		}break;
+		case 3:{
+			loadimage(background, "pic/underground.jpg");
+			rightlimit = 2144;
+			bgm(10);
+			int num3 = rand() % 3;
+			switch (num3){
+			case 0:bgm(1); break;
+			case 1:bgm(3); break;
+			case 2:bgm(7); break;
+			}
+		}break;
+		case 4:{
+			loadimage(background, "pic/underground.jpg");
+			rightlimit = 2144;
+			bgm(10);
+			int num4 = rand() % 3;
+			switch (num4){
+			case 0:bgm(1); break;
+			case 1:bgm(3); break;
+			case 2:bgm(7); break;
+			}
+		}break;
+		case 5:{
+			loadimage(background, "pic/boss room.jpg");
+			rightlimit = 1072;
+			bgm(10);
+			int num5 = rand() % 2;
+			switch (num5){
+			case 0:bgm(4); break;
+			case 1:bgm(5); break;
+			}
+		}break;
+		}
+		originx = -(rightlimit - 1072);
+		(*player).teleport(rightlimit-280, 400);
+	}break;
+	case 1:{
+		room++;
+		if (room > 5){
+			room = 5;
+			break;
+		}
+		
+		switch (room){
+		case 0:{
+			loadimage(background, "pic/composer.jpg");
+			rightlimit = 1072;
+			bgm(10);
+			bgm(8);
+		}break;
+		case 1:{
+			loadimage(background, "pic/blank.jpg");
+			rightlimit = 3216;
+			bgm(10);
+			int num1 = rand() % 2;
+			switch (num1){
+			case 0:bgm(2); break;
+			case 1:bgm(6); break;
+			}
+		}break;
+		case 2:{
+			loadimage(background, "pic/underground-2.jpg");
+			rightlimit = 2144;
+			bgm(10);
+			int num2 = rand() % 3;
+			switch (num2){
+			case 0:bgm(1); break;
+			case 1:bgm(3); break;
+			case 2:bgm(7); break;
+			}
+		}break;
+		case 3:{
+			loadimage(background, "pic/underground-2.jpg");
+			rightlimit = 2144;
+			bgm(10);
+			int num3 = rand() % 3;
+			switch (num3){
+			case 0:bgm(1); break;
+			case 1:bgm(3); break;
+			case 2:bgm(7); break;
+			}
+		}break;
+		case 4:{
+			loadimage(background, "pic/underground.jpg");
+			rightlimit = 2144;
+			bgm(10);
+			int num4 = rand() % 3;
+			switch (num4){
+			case 0:bgm(1); break;
+			case 1:bgm(3); break;
+			case 2:bgm(7); break;
+			}
+		}break;
+		case 5:{
+			loadimage(background, "pic/boss room.jpg");
+			rightlimit = 1072;
+			bgm(10);
+			int num5 = rand() % 2;
+			switch (num5){
+			case 0:bgm(4); break;
+			case 1:bgm(5); break;
+			}
+		}break;
+		}
+		originx = 0;
+		(*player).teleport(100, 400);
+	}break;
+	}
+
+	
+}
+
+int  MAINFRAME::unlimitedMode()
 {
 	IMAGE background, wbackground, welcome, player, skillpic250, skillpic300, enemyplayer, hpUI;
 	POINT pt;    //定义清理图像指针
@@ -236,8 +400,9 @@ int MAINFRAME::unlimitedMode()
 	//Sleep(17000);
 
 	settextstyle(30, 8, _T("SAO UI"));       //初始化背景字体和字母颜色
-	settextcolor(YELLOW);
+	settextcolor(WHITE);
 	setlinecolor(BLACK);
+	//setbkmode(TRANSPARENT);
 
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 
@@ -246,25 +411,28 @@ int MAINFRAME::unlimitedMode()
 	// 加载通用图片
 	loadimage(&background, "pic/blank.jpg");	// 请确保该图片是 1072*600 像素
 	loadimage(&wbackground, "pic/whitebk.jpg");
+	//若处于room=0,制作人员头像抖动
+
 
 	// 随机BGM
-	int m = ((rand() % 6) + 2);
-	bgm(m);
+	int m = rand() % 2;
+	switch (m){
+	case 0:bgm(2); break;
+	case 1:bgm(6); break;
+	}
 
 	//计算时间用参数
 	int tik = 0;
 	int comboclear = 0;
 	int mobRefresh = 0;
+	int AIAttackReady = 0;
 
 	//复活吧，我的勇士
 	PLAYER kirito;
 	//为你而战，我的女士
 	PLAYER enemy;
-	int newx = (rand() % 3016); //随机新敌人的X
-	enemy.teleport(newx, 400);
-	int newdir = (rand() % 2);  //随机新敌人的朝向
-	enemy.setDir(newdir);
 	enemy.setHp(100);
+	enemy.teleport(0, -200);
 	//世界筑造
 		
 	//开始批量绘图
@@ -276,20 +444,46 @@ int MAINFRAME::unlimitedMode()
 		putimage(0, 0, &background);
 
 		//死亡判定
-		if (kirito.getHp() <= 0)kirito.teleport(0,-200);  
-		if (enemy.getHp() <= 0&&mobRefresh==0){
+		if (kirito.getHp() <= 0){
+			kirito.setHp(0);
+			kirito.teleport(kirito.getX(), -200);
+		}
+		if ((enemy.getHp() <= 0) && (mobRefresh == 0) && room != 1 && room != 0){
 			enemy.teleport(0, -200);
+			kirito.expAdd(10 * enemy.getLev());
 			mobRefresh = 100;
 		}
 		//怪物刷新判定
 		if (mobRefresh > 0){
 			mobRefresh--;
-			if (mobRefresh == 1){
-				int newx = (rand() % 3016);
-				enemy.teleport(newx, 400);
-				int newdir = (rand() % 2);
-				enemy.setDir(newdir);
-				enemy.setHp(100);
+			if (mobRefresh == 1&&room!=1&&room!=0){
+				switch (room){
+					case 2:
+					case 3:
+					case 4:{
+						int newx = (rand() % rightlimit - 180);
+						enemy.teleport(newx, 400);                        //随机新位置
+						int newdir = (rand() % 2);
+						enemy.setDir(newdir);                             //随机新方向
+						int newhp = (rand() % (kirito.getLev() * 30));
+						enemy.setMaxHp(kirito.getLev() * 300 + newhp);	  //随机新HP
+						enemy.setHp(enemy.getMaxHp());
+						enemy.setAttack(kirito.getLev() * 25 + 30);	
+						enemy.setLevel(kirito.getLev());
+																			//新攻击
+					}break;
+					case 5:{
+						int newx = (rand() % rightlimit - 180);
+						enemy.teleport(newx, 400);                        //随机新位置
+						int newdir = (rand() % 2);
+						enemy.setDir(newdir);                             //随机新方向
+						int newhp = (rand() % (kirito.getLev() * 300));
+						enemy.setMaxHp(kirito.getLev() * 1000 + newhp);	  //随机新HP
+						enemy.setHp(enemy.getMaxHp());
+						enemy.setAttack(kirito.getLev() * 100 + 30);			//新攻击
+						enemy.setLevel(kirito.getLev());
+					}break;
+				}
 			}
 		}
 		//摩擦力(Kirito和enemy)
@@ -301,14 +495,29 @@ int MAINFRAME::unlimitedMode()
 			enemy.setSpd(enemy.getMovespd() - 1);
 		if (enemy.getMovespd()<0 && !enemy.jumpJudge())
 			enemy.setSpd(enemy.getMovespd() + 1);
+		//HP被动回复
+		if (kirito.getHp()<kirito.getMaxHp() && kirito.getHp()>0)
+		kirito.hpRege();
 		//HPUI
 		int khp = kirito.getHp(), kmhp = kirito.getMaxHp();
 		mainFrame::hpUI(&khp, &kmhp);
 		int ehp = enemy.getHp(), emhp = enemy.getMaxHp(), ex = enemy.getX(),ey=enemy.getY();
 		enemyHpUI(&ehp, &emhp, &ex,&ey);
+		//其他のUI
+		otherUI(&kirito);
+		//升级判定
+		kirito.levelUpCheck();
 		//kirito移动
-		kirito.moveX();
-		enemy.moveX();
+		kirito.moveX(&leftlimit,&rightlimit);
+		//enemy移动
+		int kx = kirito.getX();
+		enemy.AIFind(&kx);
+		enemy.moveX(&leftlimit, &rightlimit);
+		if (AIAttackReady >= 50&&enemy.stillJudge()){
+			enemy.AIAttack(&kirito);
+			AIAttackReady = 0;
+		}
+		AIAttackReady++;
 		//检测人物位置，移动屏幕
 		screenMove(kirito.getX(), kirito.getMovespd());
 
@@ -320,8 +529,8 @@ int MAINFRAME::unlimitedMode()
 		//当有键盘输入时执行
 		if (_kbhit()){
 
-			if (KEY_DOWN('J') && kirito.stillJudge()&&(!kirito.coolingJudge())){ 
-				int ex = enemy.getX(), eh = enemy.getHp();																	//普通攻击"J"
+			if (KEY_DOWN('J') && (!kirito.coolingJudge()) && (!kirito.jumpJudge()) && (!kirito.runJudge())){
+				int ex = enemy.getX(), eh = enemy.getHp();		//好暴力的取值方法															//普通攻击"J"
 				kirito.meleeAttack(&ex, &eh, &enemy, &player, &enemyplayer, &skillpic250, &skillpic300, originx);
 				sound(2);
 			}
@@ -331,7 +540,12 @@ int MAINFRAME::unlimitedMode()
 				kirito.sonicLeap(&ex, &eh, &enemy, &player, &enemyplayer, &skillpic250, &skillpic300, originx);
 				sound(2);
 			}
-			else{
+			if (KEY_DOWN('L') && kirito.stillJudge() && (!kirito.coolingJudge())){
+				int ex = enemy.getX(), eh = enemy.getHp();																	//水平四方斩"L"
+				kirito.horizontalSquare(&ex, &eh, &enemy, &player, &enemyplayer, &skillpic250, &skillpic300, originx);
+				sound(2);
+			}
+			else if(kirito.getCombo()==0&&kirito.getSkillState()==0&&kirito.getSkillType()==0){
 				if (KEY_DOWN(VK_SPACE) && (!kirito.jumpJudge())){        //按Space跳跃
 					kirito.startJump();
 				}
@@ -352,11 +566,27 @@ int MAINFRAME::unlimitedMode()
 					if (KEY_DOWN(VK_SHIFT))
 						kirito.setSpd(15);
 					}
-					
-				if (KEY_DOWN(VK_ESCAPE)){
+				if (KEY_DOWN('W')){					//场景转换
+					if (kirito.getX() - leftlimit <= 50){
+						sceneChange(&kirito, 0, &background);
+						enemy.setHp(-1);
+						mobRefresh = 100;
+						enemy.teleport(0, -200);
+					}
+					if (rightlimit - kirito.getX() <= 230){
+						sceneChange(&kirito, 1, &background);
+						enemy.setHp(-1);
+						mobRefresh = 100;
+						enemy.teleport(0, -200);
+					}
+				}
+				if (KEY_DOWN(VK_ESCAPE)){			//ESC退出
 					bgm(10);
 					return 0;
-				}//ESC退出
+				}
+				if (KEY_DOWN('R')){
+					kirito.respawn();
+				}
 				}
 		}
 
@@ -367,6 +597,9 @@ int MAINFRAME::unlimitedMode()
 			case 0:loadimage(&player, "pic/ll4.jpg"); break;
 			case 1:loadimage(&player, "pic/rr4.jpg"); break;
 			}
+			kirito.setCombo(0);
+			kirito.setSkillType(0);
+			kirito.setSkillState(0);
 			M_putimg(kirito.getX(), kirito.getY(), &player, WHITE, 100, originx);
 			
 		}
@@ -375,12 +608,16 @@ int MAINFRAME::unlimitedMode()
 			kirito.running(&player, originx);
 		}
 		//技能释放时的姿势和特效绘制
-		kirito.skillEffect(&skillpic250,&skillpic300,&player,originx);
+		kirito.skillEffect(&skillpic250,&skillpic300,&player,&enemyplayer,&enemy,originx);
 	
 		//between
 		if (!kirito.stillJudge()){
 			kirito.setStill(kirito.getStill() + 1);
 			M_putimg(kirito.getX(), kirito.getY(), &player, WHITE, 100, originx);
+		}
+		if (!enemy.stillJudge()){
+			enemy.setStill(enemy.getStill() + 1);
+			M_putimg(enemy.getX(), enemy.getY(), &enemyplayer, WHITE, 100, originx);
 		}
 		//静止时的putimg
 		if (kirito.stillJudge() && !(kirito.getSkillState()) && !kirito.jumpJudge()){
@@ -395,8 +632,6 @@ int MAINFRAME::unlimitedMode()
 			stillput(kirito.getDir(),kirito.getX(),kirito.getY(),originx, &player,0);   //静止角色图片
 		}
 		
-		
-
 		//冷却时间减少
 		if (kirito.coolingJudge())
 			kirito.coolingDown();
@@ -416,6 +651,7 @@ int MAINFRAME::unlimitedMode()
 
 void MAINFRAME::bgm(int song)
 {
+	if (BGM)
 	switch (song){
 	case 0:{
 		mciSendString(TEXT("open bgm/crossing_field.mp3 alias MySong"), NULL, 0, NULL);
@@ -449,6 +685,10 @@ void MAINFRAME::bgm(int song)
 		mciSendString(TEXT("open bgm/She_has_to_overcome_her_fear.mp3 alias MySong"), NULL, 0, NULL);
 		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
+	case 8:{
+		mciSendString(TEXT("open bgm/X.U..mp3 alias MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+	}break;
 
 	case 10:{
 		mciSendString(TEXT("close MySong"), NULL, 0, NULL);
@@ -462,6 +702,7 @@ void MAINFRAME::bgm(int song)
 
 void MAINFRAME::sound(int soundtype)
 {
+	if (SOUND)
 	switch (soundtype){
 	case 0:{
 		PlaySound("sound/boot.wav", NULL, SND_FILENAME | SND_ASYNC);
@@ -470,7 +711,7 @@ void MAINFRAME::sound(int soundtype)
 		PlaySound("sound/press.wav", NULL, SND_FILENAME | SND_ASYNC);
 	}break;
 	case 2:{
-		PlaySound("sound/melee.wav", NULL, SND_FILENAME | SND_ASYNC);
+		PlaySound("sound/melee_1.wav", NULL, SND_FILENAME | SND_ASYNC);
 	}break;
 	case 3:{
 		PlaySound("sound/welcome.wav", NULL, SND_FILENAME | SND_ASYNC);
@@ -491,6 +732,7 @@ void MAINFRAME::hpUI(int *hp, int *maxHp)
 	IMAGE hpTIAO, hpCAO;
 	float hpRatio = (1.0*(*hp)) / (1.0*(*maxHp));
 	int hpPix = hpRatio * 258;
+	char hps[30] = "\0";
 
 	if (hpRatio > 0.66)								//根据血量加载适应颜色的hpTIAO
 		loadimage(&hpTIAO, "pic/hp_green.jpg",hpPix,24,true);
@@ -499,9 +741,41 @@ void MAINFRAME::hpUI(int *hp, int *maxHp)
 	if (hpRatio <= 0.33)
 		loadimage(&hpTIAO, "pic/hp_red.jpg", hpPix, 24, true);
 	loadimage(&hpCAO, "pic/hp_bar.jpg");			//加载hpCAO
+	sprintf_s(hps, "%d / %d",*hp,*maxHp);
 	//图像输出
-	M_putimg(75-originx, 12, &hpTIAO, WHITE , 100 , originx);
-	M_putimg(0 - originx, 0, &hpCAO, WHITE, 80, originx);
+	if (hp > 0){
+		M_putimg(75 - originx, 12, &hpTIAO, WHITE, 100, originx);
+		HPCAO_putimg(0 - originx, 0, &hpCAO, WHITE, 80, originx);
+		outtextxy(250-originx,30,hps);
+	}
+}
+
+void MAINFRAME::otherUI(PLAYER* player)
+{
+	char movespd[20];
+	char still[20];
+	char combo[10];
+	char skilltype[20];
+	char skillstate[20];
+	char level[30];
+	char exp[30];
+	char atk[30];
+	sprintf_s(movespd, "MOVESPD:%d", (*player).getMovespd());
+	sprintf_s(still, "STILL:%d", (*player).getStill());
+	sprintf_s(combo, "COMBO:%d", (*player).getCombo());
+	sprintf_s(skilltype, "SKILLTYPE:%d", (*player).getSkillType());
+	sprintf_s(skillstate, "SKILLSTATE:%d", (*player).getSkillState());
+	sprintf_s(level, "LEVEL:%d", (*player).getLev());
+	sprintf_s(exp, "EXP:%d / %d", (*player).getExp(), 25*(*player).getLev()*(*player).getLev() + (*player).getLev() * 5 + 20);
+	sprintf_s(atk, "ATTACK:%d", (*player).getAttack());
+	outtextxy(-originx, 50, movespd);
+	outtextxy(-originx, 90, still);
+	outtextxy(-originx, 130, combo);
+	outtextxy(-originx, 170, skilltype);
+	outtextxy(-originx, 210, skillstate);
+	outtextxy(-originx, 250, level);
+	outtextxy(-originx, 290, exp);
+	outtextxy(-originx, 330, atk);
 }
 
 void MAINFRAME::enemyHpUI(int *hp, int *maxHp,int *x,int *y)
@@ -509,6 +783,8 @@ void MAINFRAME::enemyHpUI(int *hp, int *maxHp,int *x,int *y)
 	IMAGE hpTIAO;
 	float hpRatio = (1.0*(*hp)) / (1.0*(*maxHp));
 	int hpPix = hpRatio * 180;
+	char hpNum[20];
+	sprintf_s(hpNum, "%d / %d", *hp,*maxHp);
 	if (hpRatio > 0.66)								//根据血量加载适应颜色的hpTIAO
 		loadimage(&hpTIAO, "pic/hp_enemy_green.jpg", hpPix, 24, true);
 	if (hpRatio > 0.33&&hpRatio <= 0.66)
@@ -517,6 +793,7 @@ void MAINFRAME::enemyHpUI(int *hp, int *maxHp,int *x,int *y)
 		loadimage(&hpTIAO, "pic/hp_enemy_red.jpg", hpPix, 24, true);
 	//图像输出
 	M_putimg(*x, *y-20, &hpTIAO, WHITE, 100, originx);
+	outtextxy(*x+180, *y - 20, hpNum);
 }
 
 void MAINFRAME::M_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int tp, int originx)
@@ -525,6 +802,60 @@ void MAINFRAME::M_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int t
 	setorigin(originx, 0);
 	int x, y, num;
 	int deviation = 100;
+	int R, G, B;//记录贴图某点色彩
+	//记录排除颜色色彩
+	int avoid_r = GetRValue(avoid_color);
+	int avoid_g = GetGValue(avoid_color);
+	int avoid_b = GetBValue(avoid_color);
+	IMAGE pSrcImg;//背景图
+	IMAGE tempimg;//临时贴图
+	mainFrame::copy_img(&tempimg, pimg);//保护原图
+	SetWorkingImage(NULL);//对默认绘图窗口的绘图操作
+	getimage(&pSrcImg, dstX, dstY, pimg->getwidth(), pimg->getheight());
+
+	//透明度容错
+	if (tp<0)
+	{
+		tp = 0;
+	}
+	else if (tp>100)
+	{
+		tp = 100;
+	}
+
+	// 获取背景指向显存的指针
+	DWORD* bk_pMem = GetImageBuffer(&pSrcImg);
+
+	//贴图指向显存的指针
+	DWORD* pMem = GetImageBuffer(&tempimg);
+
+	for (y = 0; y<pimg->getheight(); y++)
+	{
+		for (x = 0; x<pimg->getwidth(); x++)
+		{
+			num = y*pimg->getwidth() + x;
+			R = GetRValue(pMem[num]);
+			G = GetGValue(pMem[num]);
+			B = GetBValue(pMem[num]);
+			if ((abs(R - avoid_r) <= deviation) && (abs(G - avoid_g) <= deviation) && (abs(B - avoid_b) <= deviation))
+			{
+				pMem[num] = bk_pMem[num];
+			}
+			else
+			{
+				pMem[num] = RGB((R*tp + GetRValue(bk_pMem[num])*(100 - tp)) / 100, (G*tp + GetGValue(bk_pMem[num])*(100 - tp)) / 100, (B*tp + GetBValue(bk_pMem[num])*(100 - tp)) / 100);
+			}
+		}
+	}
+	putimage(dstX, dstY, &tempimg);
+}
+
+void MAINFRAME::HPCAO_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int tp, int originx)
+{
+	//排除颜色avoid_color,容差为deviation；透明度tp(transparency)从0到100
+	setorigin(originx, 0);
+	int x, y, num;
+	int deviation = 10;
 	int R, G, B;//记录贴图某点色彩
 	//记录排除颜色色彩
 	int avoid_r = GetRValue(avoid_color);
