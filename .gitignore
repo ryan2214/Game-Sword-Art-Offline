@@ -2,3 +2,5 @@
 *.psd
 #picture unused
 *.png
+#video&sound
+*.wmv
