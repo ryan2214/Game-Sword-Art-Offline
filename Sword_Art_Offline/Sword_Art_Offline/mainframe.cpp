@@ -234,6 +234,27 @@ void MAINFRAME::welcomeInit()
 	closegraph();
 }
 
+void MAINFRAME::credit(IMAGE *JY,IMAGE *HZT,IMAGE *LTH,int* num)
+{
+	switch (*num){
+	case 1:{
+		putimage(500, 180, JY);
+		putimage(300, 180, HZT);
+		putimage(700, 180, LTH);
+	}break;
+	case 2:{
+		putimage(520, 200, JY);
+		putimage(320, 200, HZT);
+		putimage(720, 200, LTH);
+	}break;
+	case 3:{
+		putimage(530, 210, JY);
+		putimage(330, 210, HZT);
+		putimage(730, 210, LTH);
+	}break;
+	}
+}
+
 void MAINFRAME::sceneChange(PLAYER *player,bool dir,IMAGE *background)
 {
 	
@@ -411,8 +432,11 @@ int  MAINFRAME::unlimitedMode()
 	// 加载通用图片
 	loadimage(&background, "pic/blank.jpg");	// 请确保该图片是 1072*600 像素
 	loadimage(&wbackground, "pic/whitebk.jpg");
-	//若处于room=0,制作人员头像抖动
-
+	//加载头像
+	IMAGE HZT, JY, LTH;
+	loadimage(&HZT, "pic/HZT.jpg");
+	loadimage(&JY, "pic/JY.jpg");
+	loadimage(&LTH, "pic/LTH.jpg");
 
 	// 随机BGM
 	int m = rand() % 2;
@@ -442,7 +466,24 @@ int  MAINFRAME::unlimitedMode()
 
 		//背景图
 		putimage(0, 0, &background);
-
+		//若处于room=0,制作人员头像抖动
+		if (room == 0){
+			tik++;
+			if (tik > 17)
+				tik = 0;
+			if (tik >= 0 && tik <= 11){
+				int haha = 1;
+				credit(&HZT, &JY, &LTH, &haha);
+			}
+			if (tik >= 12 && tik <= 14){
+				int haha = 2;
+				credit(&HZT, &JY, &LTH, &haha);
+			}
+			if (tik >= 15 && tik <= 17){
+				int haha = 3;
+				credit(&HZT, &JY, &LTH, &haha);
+			}
+		}
 		//死亡判定
 		if (kirito.getHp() <= 0){
 			kirito.setHp(0);
@@ -582,7 +623,7 @@ int  MAINFRAME::unlimitedMode()
 				}
 				if (KEY_DOWN(VK_ESCAPE)){			//ESC退出
 					bgm(10);
-					return 0;
+					closegraph();
 				}
 				if (KEY_DOWN('R')){
 					kirito.respawn();

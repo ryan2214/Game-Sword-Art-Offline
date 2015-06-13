@@ -330,18 +330,10 @@ void PLAYER::horizontalSquare(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *p
 		}
 	}break;
 	case 1:{
-		if (((*enemy).getX() - x) <= INIT_SONICLEAP_RANGE && ((*enemy).getX() - x) >= 0){         /****击中判断****/
-			(*enemy).setHp((*enemy).getHp() - (2 + logf(level))*attack);                                  //击中造成伤害
-			(*enemy).setStill(-50);                                                 //击中造成僵直
-			(*enemy).setSpd(0);                    //击中造成僵直
-			loadimage(enemyplayer, "pic/enemylrunning3.jpg");                   //加载被击中时姿势
-			MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, originx); /****击中判断结束****/
-		}
-
 		switch (combo){
 		case 1:{
-			loadimage(player, "pic/rsonicleap-2.jpg");
-			loadimage(skillpic250, "pic/rsonicleap-1.jpg");
+			loadimage(player, "pic/rfourdash-2.jpg");
+			loadimage(skillpic250, "pic/rfourdash-1.jpg");
 			MAINFRAME::M_putimg(x, y, player, WHITE, 100, originx);
 		}break;
 		}
@@ -567,7 +559,7 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300,IMAGE *player,IM
 					movespd = 0;
 					Sleep(10);
 				}
-				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_SONICLEAP_RANGE){         /****击中判断****/
+				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_HS_RANGE){         /****击中判断****/
 					(*enemy).setHp((*enemy).getHp() - (2+logf(level))*attack*0.2);            //击中造成伤害
 					(*enemy).setStill(-90);                                                 //击中造成僵直
 					(*enemy).setSpd(0);												   //击中造成僵直
@@ -589,7 +581,7 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300,IMAGE *player,IM
 					movespd = 0;
 					Sleep(30);
 				}
-				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_SONICLEAP_RANGE){         /****击中判断****/
+				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_HS_RANGE){         /****击中判断****/
 					(*enemy).setHp((*enemy).getHp() - (2+logf(level))*attack*0.2);                                  //击中造成伤害
 					(*enemy).setStill(-90);                                                 //击中造成僵直
 					(*enemy).setSpd(0);												   //击中造成僵直
@@ -613,7 +605,7 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300,IMAGE *player,IM
 					movespd = 0;
 					Sleep(30);
 				}
-				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_SONICLEAP_RANGE){         /****击中判断****/
+				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_HS_RANGE){         /****击中判断****/
 					(*enemy).setHp((*enemy).getHp() - (2+logf(level))*attack*0.2);                                  //击中造成伤害
 					(*enemy).setStill(-90);                                                 //击中造成僵直
 					(*enemy).setSpd(0);												   //击中造成僵直
@@ -637,7 +629,7 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300,IMAGE *player,IM
 					movespd = 0;
 					Sleep(30);
 				}
-				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_SONICLEAP_RANGE){         /****击中判断****/
+				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_HS_RANGE){         /****击中判断****/
 					(*enemy).setHp((*enemy).getHp() - (2+logf(level))*attack*0.2);                                  //击中造成伤害
 					(*enemy).setStill(-90);                                                 //击中造成僵直
 					(*enemy).setSpd(0);												   //击中造成僵直
@@ -677,38 +669,135 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300,IMAGE *player,IM
 			}
 		}break;
 		case 1:{
-			if (skillState <= 30)combo = 2;  //由skillState确定combo
-			if (skillState <= 20)combo = 3;
+			if (skillState <= 35)combo = 2;  //由skillState确定combo
+			if (skillState <= 30)combo = 3;
+			if (skillState <= 25)combo = 4;
+			if (skillState <= 20)combo = 5;
+			if (skillState <= 15)combo = 6;
 			switch (combo){                 //根据combo判断技能图片
 			case 1:{
 				//技能图片位置修正
-				loadimage(skillpic250, "pic/rsonicleap-1.jpg", 180, 185, true);
-				MAINFRAME::M_putimg(x, y, skillpic250, WHITE, 5 * (skillState - 30), ox);
+				loadimage(skillpic250, "pic/rfourdash-1.jpg", 180, 185, true);
+				MAINFRAME::M_putimg(x, y, skillpic250, WHITE, 6 * (skillState - 35), ox);
+				Sleep(30);
 				//技能图片位置修正后还原
 			}break;
-			case 2:{
-				if (skillState == 30)x -= 110;
-				loadimage(player, "pic/rsonicleap-3.jpg", 354, 185, true);
+			case 2:{                     //第1击
+				if (skillState == 35){
+					x -= 110;
+					movespd = +150;
+				}
+				if (skillState < 34){
+					movespd = 0;
+					Sleep(10);
+				}
+				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_HS_RANGE){         /****击中判断****/
+					(*enemy).setHp((*enemy).getHp() - (2 + logf(level))*attack*0.2);            //击中造成伤害
+					(*enemy).setStill(-90);                                                 //击中造成僵直
+					(*enemy).setSpd(0);												   //击中造成僵直
+					loadimage(enemyplayer, "pic/enemylrunning3.jpg");                   //加载被击中时姿势
+					MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
+				}
+				loadimage(player, "pic/rfourdash-3.jpg", 354, 185, true);
+				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
+				x += 75;												//加特技
+				loadimage(skillpic300, "pic/rfoursp-1.jpg", 340, 185, true);
+				MAINFRAME::M_putimg(x, y, skillpic300, WHITE, 20 * (skillState - 30), ox);
+				x -= 75;
+			}break;
+			case 3:{						//第2击
+				if (skillState == 30){
+					movespd = -150;
+				}
+				if (skillState < 29){
+					movespd = 0;
+					Sleep(30);
+				}
+				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_HS_RANGE){         /****击中判断****/
+					(*enemy).setHp((*enemy).getHp() - (2 + logf(level))*attack*0.2);                                  //击中造成伤害
+					(*enemy).setStill(-90);                                                 //击中造成僵直
+					(*enemy).setSpd(0);												   //击中造成僵直
+					loadimage(enemyplayer, "pic/enemylrunning3.jpg");                   //加载被击中时姿势
+					MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
+				}
+				loadimage(player, "pic/rfourdash-4.jpg", 354, 185, true);
+				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
+				x -= 25;
+				y -= 20;
+				loadimage(skillpic300, "pic/rfoursp-2.jpg", 340, 185, true);
+				MAINFRAME::M_putimg(x, y, skillpic300, WHITE, 20 * (skillState - 25), ox);
+				x += 25;
+				y += 20;
+			}break;
+			case 4:{						//第3击
+				if (skillState == 25){
+					movespd = 150;
+				}
+				if (skillState < 24){
+					movespd = 0;
+					Sleep(30);
+				}
+				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_HS_RANGE){         /****击中判断****/
+					(*enemy).setHp((*enemy).getHp() - (2 + logf(level))*attack*0.2);                                  //击中造成伤害
+					(*enemy).setStill(-90);                                                 //击中造成僵直
+					(*enemy).setSpd(0);												   //击中造成僵直
+					loadimage(enemyplayer, "pic/enemylrunning3.jpg");                   //加载被击中时姿势
+					MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
+				}
+				loadimage(player, "pic/rfourdash-5.jpg", 354, 185, true);
+				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
+				y -= 30;
+				x += 13;
+				loadimage(skillpic300, "pic/rfoursp-3.jpg", 340, 185, true);
+				MAINFRAME::M_putimg(x, y, skillpic300, WHITE, 20 * (skillState - 20), ox);
+				y += 30;
+				x -= 13;
+			}break;
+			case 5:{							//第4击
+				if (skillState == 20){
+					movespd = -150;
+				}
+				if (skillState < 19){
+					movespd = 0;
+					Sleep(30);
+				}
+				if ((x - (*enemy).getX()) <= INIT_HS_RANGE || ((*enemy).getX() - x) <= INIT_HS_RANGE){         /****击中判断****/
+					(*enemy).setHp((*enemy).getHp() - (2 + logf(level))*attack*0.2);                                  //击中造成伤害
+					(*enemy).setStill(-90);                                                 //击中造成僵直
+					(*enemy).setSpd(0);												   //击中造成僵直
+					loadimage(enemyplayer, "pic/enemylrunning3.jpg");                   //加载被击中时姿势
+					MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
+				}
+				loadimage(player, "pic/rfourdash-6.jpg", 354, 185, true);
 				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
 
-				loadimage(skillpic300, "pic/sonicleap_flash.jpg", 340, 185, true);
-				MAINFRAME::M_putimg(x, y, skillpic300, WHITE, 10 * (skillState - 20), ox);
-				movespd = 80;
+				loadimage(skillpic300, "pic/rfoursp-4.jpg", 340, 185, true);
+				MAINFRAME::M_putimg(x, y, skillpic300, WHITE, 20 * (skillState - 15), ox);
+
 			}break;
-			case 3:{
-				if (skillState == 20)x -= 110;
+			case 6:{							//收尾
 
-				loadimage(player, "pic/rsonicleap-4.jpg", 354, 185, true);
+				loadimage(player, "pic/rfourdash-6.jpg", 354, 185, true);
+				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
+				if (skillState>0 && (skillState<10))
+					loadimage(skillpic300, "pic/foursp-5-6.jpg", 340, 185, true);
+				if (skillState>3 && (skillState<10))
+					loadimage(skillpic300, "pic/foursp-5-4.jpg", 340, 185, true);
+				if ((skillState>6) && (skillState<10))
+					loadimage(skillpic300, "pic/foursp-5.jpg", 340, 185, true);
+				MAINFRAME::M_putimg((*enemy).getX() - 110, y, skillpic300, WHITE, 6 * skillState, ox);
 
-				movespd = 2;
 				if (skillState == 1){
 					combo = 0;
 					x += 110;
 				}
-				if (skillState == 1 || skillState == 0)
-					loadimage(player, "pic/rstill.jpg", 180, 185, true);
+				if (skillState == 1 || skillState == 0){
+					loadimage(player, "pic/lstill.jpg", 180, 185, true);
+					dir = 0;
+				}
 				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
 			}break;
+
 			}
 		}break;
 		}
