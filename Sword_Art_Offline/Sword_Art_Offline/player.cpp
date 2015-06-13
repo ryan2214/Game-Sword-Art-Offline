@@ -947,6 +947,11 @@ void PLAYER::skillStateMove()
 	skillState--;
 }
 
+int PLAYER::getType()
+{
+	return type;
+}
+
 //初始化用函数
 
 void PLAYER::teleport(int x1, int y1)	//用于玩家传送
@@ -1018,4 +1023,9 @@ void PLAYER::setRun(int num)
 void PLAYER::setLevel(int num)
 {
 	level = num;
+}
+
+void PLAYER::setType(int num)
+{
+	type = num;
 }

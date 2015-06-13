@@ -50,7 +50,7 @@ public:
 	void levelUpCheck();		//检测是否升级
 	void hpRege();				//被动HP回复
 	void respawn();				//复活，经验损失10%
-	void getType();				//获取种类
+	int getType();				//获取种类
 	void bossAttack(int*, int*, PLAYER*, IMAGE*, IMAGE*, int);
 	//初始化用函数
 	void teleport(int, int);//用于玩家传送
