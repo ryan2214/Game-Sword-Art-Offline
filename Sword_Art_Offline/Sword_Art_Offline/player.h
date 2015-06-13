@@ -91,7 +91,7 @@ protected:		/****玩家属性****/
 	bool isRun;             //跑动
 	bool isJump;            //跳跃
 	bool cooling;         //是否处于攻击状态
-	int type;				//0玩家；1普通敌人；2BOSS
+	int type;				//0玩家；1-9普通敌人；10BOSS
 
 
 }kirito,enemy;

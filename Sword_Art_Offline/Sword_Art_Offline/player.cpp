@@ -53,6 +53,7 @@ PLAYER::PLAYER()
 	exp = INIT_EXP;
 	level = INIT_LEVEL;
 	hpregen = INIT_HPRE;
+	type = 0;
 }
 
 PLAYER::~PLAYER() {}
