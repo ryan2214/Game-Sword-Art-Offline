@@ -11,6 +11,8 @@
 #define INIT_ORIGINX 0
 #define INIT_FLOOR 1
 #define INIT_ROOM 1
+#define INIT_MOBSLAYNUM 0
+#define INIT_DEATHTIME 0
 #define INIT_LEFTLIMIT 0
 #define INIT_RIGHTLIMIT 3216
 #define INIT_BGM true
@@ -20,6 +22,9 @@ MAINFRAME::MAINFRAME()
 {
 	originx = INIT_ORIGINX;
 	floor = INIT_FLOOR;
+	highfloor = INIT_FLOOR;
+	mobslaynum = INIT_MOBSLAYNUM;
+	deathtime = INIT_DEATHTIME;
 	room = INIT_ROOM;
 	leftlimit = INIT_LEFTLIMIT;
 	rightlimit = INIT_RIGHTLIMIT;
@@ -77,9 +82,9 @@ void M_clear(POINT pt, IMAGE *bk, IMAGE pic)//pt上一个动作图片的输出坐标，bk背景
 	putimage(pt.x, pt.y, &clear);//输出
 }
 
-void MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int type)
+void MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int t)
 {
-	switch (type){
+	switch (t){
 	case 0:{
 		switch (dir){
 		case 0:{
@@ -92,7 +97,7 @@ void MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int type)
 		}break;
 		}
 	}break;
-	case 1:{
+	case 9:{
 		switch (dir){
 		case 0:{
 			loadimage(player, "pic/les.jpg", 180, 185, true);
@@ -101,6 +106,18 @@ void MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int type)
 		case 1:{
 			loadimage(player, "pic/res.jpg", 180, 185, true);
 			mainFrame::M_putimg(x, y, player, WHITE, 100, ox);
+		}break;
+		}
+	}break;
+	case 10:{
+		switch (dir){
+		case 0:{
+			loadimage(player, "pic/gleam eyes(lstill).jpg", 425, 425, true);
+			mainFrame::M_putimg(x, y-240, player, WHITE, 100, ox);
+		}break;
+		case 1:{
+			loadimage(player, "pic/gleam eyes(rstill).jpg", 425, 425, true);
+			mainFrame::M_putimg(x, y-240, player, WHITE, 100, ox);
 		}break;
 		}
 	}break;
@@ -142,7 +159,7 @@ void MAINFRAME::screenMove(int x, int spd)
 	setorigin(originx, 0);                 //重设原点
 }
 
-void MAINFRAME::welcomeInit()
+bool MAINFRAME::welcomeInit()
 {
 	bool flagstart = false;
 	bool flagsound = true;
@@ -162,7 +179,7 @@ void MAINFRAME::welcomeInit()
 	char headline[] = "s w o r d    a r t    o f f l i n e";
 	char ETS[] = "PRESS ENTER TO START";
 	
-	//bgm(0);                                  //播放crossing_field.mp3
+	bgm(0);                                  //播放crossing_field.mp3
 	
 	settextstyle(30, 8, _T("SAO UI"));       //初始化背景字体和字母颜色
 	settextcolor(YELLOW);
@@ -202,8 +219,8 @@ void MAINFRAME::welcomeInit()
 				flagsound = 0;
 			}
 			if (KEY_DOWN(VK_LBUTTON)){
-				sound(0);
-				bgm(9);
+				//sound(0);
+				bgm(10);
 				unlimitedMode();
 			}
 
@@ -220,13 +237,14 @@ void MAINFRAME::welcomeInit()
 		if (i >= maxx - 1)	i = -1;		    // 循环处理
 
 		if (KEY_DOWN(VK_RETURN)){           //ENTER键开始新游戏（暂定）
-			sound(0);
-			bgm(9);
+			//sound(0);
+			bgm(10);
 		    unlimitedMode();
 		}
 		if (KEY_DOWN('Q')){           //按Q键退出
-			bgm(9);
-			gameExit();
+			bgm(10);
+			return true;
+			closegraph();
 		}
 	}/******************主循环结束*******************/
 
@@ -255,7 +273,12 @@ void MAINFRAME::credit(IMAGE *JY,IMAGE *HZT,IMAGE *LTH,int* num)
 	}
 }
 
-void MAINFRAME::sceneChange(PLAYER *player,bool dir,IMAGE *background)
+void MAINFRAME::roadBar(IMAGE *help)
+{
+	putimage(rightlimit - 510, 200, help);
+}
+
+void MAINFRAME::sceneChange(PLAYER *player,int dir,IMAGE *background)
 {
 	
 	switch (dir)
@@ -266,7 +289,7 @@ void MAINFRAME::sceneChange(PLAYER *player,bool dir,IMAGE *background)
 			room = 0;
 			break;
 		}
-		
+
 		switch (room){
 		case 0:{
 			loadimage(background, "pic/composer.jpg");
@@ -285,7 +308,7 @@ void MAINFRAME::sceneChange(PLAYER *player,bool dir,IMAGE *background)
 			}
 		}break;
 		case 2:{
-			loadimage(background, "pic/underground.jpg");
+			loadimage(background, "pic/underground-2.jpg");
 			rightlimit = 2144;
 			bgm(10);
 			int num2 = rand() % 3;
@@ -296,7 +319,7 @@ void MAINFRAME::sceneChange(PLAYER *player,bool dir,IMAGE *background)
 			}
 		}break;
 		case 3:{
-			loadimage(background, "pic/underground.jpg");
+			loadimage(background, "pic/underground-2.jpg");
 			rightlimit = 2144;
 			bgm(10);
 			int num3 = rand() % 3;
@@ -329,7 +352,7 @@ void MAINFRAME::sceneChange(PLAYER *player,bool dir,IMAGE *background)
 		}break;
 		}
 		originx = -(rightlimit - 1072);
-		(*player).teleport(rightlimit-280, 400);
+		(*player).teleport(rightlimit - 280, 400);
 	}break;
 	case 1:{
 		room++;
@@ -337,7 +360,7 @@ void MAINFRAME::sceneChange(PLAYER *player,bool dir,IMAGE *background)
 			room = 5;
 			break;
 		}
-		
+
 		switch (room){
 		case 0:{
 			loadimage(background, "pic/composer.jpg");
@@ -402,28 +425,69 @@ void MAINFRAME::sceneChange(PLAYER *player,bool dir,IMAGE *background)
 		originx = 0;
 		(*player).teleport(100, 400);
 	}break;
+	case 2:{
+		loadimage(background, "pic/whiteh.jpg");
+		room = -1;
+		rightlimit = 1072;
+		bgm(10);
+		bgm(11);
+		(*player).teleport(100, 400);
+	}break;
+	case 3:{
+		loadimage(background, "pic/blank.jpg");
+		room = 1;
+		rightlimit = 3216;
+		bgm(10);
+		int num6 = rand() % 2;
+		switch (num6){
+		case 0:bgm(2); break;
+		case 1:bgm(6); break;
+		}
+			(*player).teleport(1675, 400);
+			originx = -1200;
+	}break;
 	}
-
 	
 }
 
-int  MAINFRAME::unlimitedMode()
+void MAINFRAME::achievement(PLAYER *player)
 {
-	IMAGE background, wbackground, welcome, player, skillpic250, skillpic300, enemyplayer, hpUI;
+	settextstyle(60, 16, _T("SAO UI"));       //初始化背景字体和字母颜色
+
+	char Floor[30];
+	char Highfloor[30];
+	char Mobslaynum[30];
+	char Deathtime[30];
+	sprintf_s(Floor, "FLOOR:%d", floor);
+	sprintf_s(Highfloor, "HIGHFLOOR:%d", highfloor);
+	sprintf_s(Mobslaynum, "MOB SLAYED NUMBER:%d", mobslaynum);
+	sprintf_s(Deathtime, "DEATH:%d", deathtime);
+	outtextxy(700, 100, Floor);
+	outtextxy(700, 200, Highfloor);
+	outtextxy(700, 300, Mobslaynum);
+	outtextxy(700, 400, Deathtime);
+
+	settextstyle(30, 8, _T("SAO UI"));       //初始化背景字体和字母颜色
+
+}
+
+void  MAINFRAME::unlimitedMode()
+{
+	IMAGE background, wbackground, welcome, player, skillpic250, skillpic300, enemyplayer, hpUI,soundP,soundHover;
 	POINT pt;    //定义清理图像指针
 	pt.x = 0;   //清理图像指针赋值
 	pt.y = 0;
 	
 	//link start!
-	//HWND hwnd = MCIWndCreate(GetHWnd(), NULL, WS_CHILD | WS_VISIBLE | MCIWNDF_NOMENU | MCIWNDF_NOPLAYBAR, NULL);
-	//MCIWndOpen(hwnd, "avi\\loadgame.wmv", NULL);
-	//MCIWndPlay(hwnd);
-	//Sleep(17000);
-
+	HWND hwnd = MCIWndCreate(GetHWnd(), NULL, WS_CHILD | WS_VISIBLE | MCIWNDF_NOMENU | MCIWNDF_NOPLAYBAR, NULL);
+	MCIWndOpen(hwnd, "avi\\loadgame.wmv", NULL);
+	MCIWndPlay(hwnd);
+	Sleep(17000);
+	
 	settextstyle(30, 8, _T("SAO UI"));       //初始化背景字体和字母颜色
-	settextcolor(WHITE);
-	setlinecolor(BLACK);
-	//setbkmode(TRANSPARENT);
+	settextcolor(BLACK);
+	setlinecolor(TRANSPARENT);
+	setbkmode(TRANSPARENT);
 
 	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 
@@ -432,12 +496,16 @@ int  MAINFRAME::unlimitedMode()
 	// 加载通用图片
 	loadimage(&background, "pic/blank.jpg");	// 请确保该图片是 1072*600 像素
 	loadimage(&wbackground, "pic/whitebk.jpg");
+	loadimage(&soundP, "pic/panel_sound.jpg");
+	loadimage(&soundHover, "pic/default_hover.jpg");
 	//加载头像
 	IMAGE HZT, JY, LTH;
 	loadimage(&HZT, "pic/HZT.jpg");
 	loadimage(&JY, "pic/JY.jpg");
 	loadimage(&LTH, "pic/LTH.jpg");
-
+	//加载路牌图
+	IMAGE roadt;
+	loadimage(&roadt,"pic/roadt.jpg");
 	// 随机BGM
 	int m = rand() % 2;
 	switch (m){
@@ -448,8 +516,13 @@ int  MAINFRAME::unlimitedMode()
 	//计算时间用参数
 	int tik = 0;
 	int comboclear = 0;
+	int ecomboclear = 0;
 	int mobRefresh = 0;
 	int AIAttackReady = 0;
+	int res = 0;
+	//计算按键触发参数
+	int flagstart = 0;
+	int flagsound = 1;
 
 	//复活吧，我的勇士
 	PLAYER kirito;
@@ -457,13 +530,15 @@ int  MAINFRAME::unlimitedMode()
 	PLAYER enemy;
 	enemy.setHp(100);
 	enemy.teleport(0, -200);
+	enemy.setType(1);
 	//世界筑造
 		
 	//开始批量绘图
 	BeginBatchDraw();  
 
 	while (1){      /**********************************游戏主循环******************************/
-
+		//获取窗口句柄
+		hwnd = GetHWnd();
 		//背景图
 		putimage(0, 0, &background);
 		//若处于room=0,制作人员头像抖动
@@ -484,20 +559,48 @@ int  MAINFRAME::unlimitedMode()
 				credit(&HZT, &JY, &LTH, &haha);
 			}
 		}
-		//死亡判定
-		if (kirito.getHp() <= 0){
-			kirito.setHp(0);
-			kirito.teleport(kirito.getX(), -200);
+		//路标
+		if (room == 1 && kirito.getX() <= rightlimit - 455 && kirito.getX() >= rightlimit - 575)
+			roadBar(&roadt);
+		//sound开关控制
+
+		//获取鼠标位置
+		GetCursorPos(&pt);
+		//将获取到的鼠标屏幕位置转换为窗口内位置
+		ScreenToClient(hwnd, &pt);
+		//鼠标响应判断
+		if (pt.x >= 1032 && pt.y >= 10 && pt.x <= 1062 && pt.y <= 40){
+			flagstart = 1;
+			if (flagsound == 1){
+				sound(1);
+				flagsound = 0;
+			}
+			if (KEY_DOWN(VK_LBUTTON)){
+				BGM = false;
+				SOUND = false;
+				kirito.setSound(false);
+				mciSendString(TEXT("stop MySong"), NULL, 0, NULL);
+			}
+			if (KEY_DOWN(VK_RBUTTON)){
+				BGM = true;
+				SOUND = true;
+				kirito.setSound(true);
+				mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+			}
+
 		}
-		if ((enemy.getHp() <= 0) && (mobRefresh == 0) && room != 1 && room != 0){
-			enemy.teleport(0, -200);
-			kirito.expAdd(10 * enemy.getLev());
-			mobRefresh = 100;
+		else{
+			flagstart = 0;
+			flagsound = 1;
 		}
+		if (flagstart==1)
+			M_putimg(1032 - originx, 10, &soundHover, WHITE, 80, originx);
+		M_putimg(1032 - originx, 10, &soundP, WHITE, 80, originx);
+		
 		//怪物刷新判定
 		if (mobRefresh > 0){
 			mobRefresh--;
-			if (mobRefresh == 1&&room!=1&&room!=0){
+			if (mobRefresh == 1 && room != 1 && room != 0 && room != -1){
 				switch (room){
 					case 2:
 					case 3:
@@ -506,23 +609,24 @@ int  MAINFRAME::unlimitedMode()
 						enemy.teleport(newx, 400);                        //随机新位置
 						int newdir = (rand() % 2);
 						enemy.setDir(newdir);                             //随机新方向
-						int newhp = (rand() % (kirito.getLev() * 30));
-						enemy.setMaxHp(kirito.getLev() * 300 + newhp);	  //随机新HP
+						int newhp = (rand() % (room * 30));
+						enemy.setMaxHp((room * 300 + newhp)*floor);	  //随机新HP
 						enemy.setHp(enemy.getMaxHp());
-						enemy.setAttack(kirito.getLev() * 25 + 30);	
-						enemy.setLevel(kirito.getLev());
-																			//新攻击
+						enemy.setAttack((room * 25 + 30)*floor);	
+						enemy.setLevel(room*floor);
+						enemy.setType(9);								//新攻击
 					}break;
 					case 5:{
 						int newx = (rand() % rightlimit - 180);
 						enemy.teleport(newx, 400);                        //随机新位置
 						int newdir = (rand() % 2);
 						enemy.setDir(newdir);                             //随机新方向
-						int newhp = (rand() % (kirito.getLev() * 300));
-						enemy.setMaxHp(kirito.getLev() * 1000 + newhp);	  //随机新HP
+						int newhp = (rand() % (room * 30));
+						enemy.setMaxHp((room * 300 + newhp)*floor);	  //随机新HP
 						enemy.setHp(enemy.getMaxHp());
-						enemy.setAttack(kirito.getLev() * 100 + 30);			//新攻击
-						enemy.setLevel(kirito.getLev());
+						enemy.setAttack((room * 25 + 30)*floor);
+						enemy.setLevel(room*floor);
+						enemy.setType(10);
 					}break;
 				}
 			}
@@ -546,25 +650,47 @@ int  MAINFRAME::unlimitedMode()
 		enemyHpUI(&ehp, &emhp, &ex,&ey);
 		//其他のUI
 		otherUI(&kirito);
+		if (room == 1){
+			char FLOOR[30];
+			sprintf_s(FLOOR, "FLOOR:%d", floor);
+			outtextxy(1758, 290, FLOOR);
+		}
+		//成就间
+		if (room == -1){
+			achievement(&kirito);
+		}
 		//升级判定
 		kirito.levelUpCheck();
 		//kirito移动
 		kirito.moveX(&leftlimit,&rightlimit);
-		//enemy移动
+		//enemy移动和攻击
 		int kx = kirito.getX();
-		enemy.AIFind(&kx);
-		enemy.moveX(&leftlimit, &rightlimit);
-		if (AIAttackReady >= 50&&enemy.stillJudge()){
-			enemy.AIAttack(&kirito);
-			AIAttackReady = 0;
+		if (enemy.getStill() >= -5){
+			enemy.AIFind(&kx);
+			if ((AIAttackReady >= 100) && (enemy.stillJudge())){
+				enemy.AIAttack(&kirito, &enemyplayer);
+				enemy.setSkillState(10);
+				enemy.setSkillType(1);
+				AIAttackReady = 0;
+			}
 		}
+		enemy.moveX(&leftlimit, &rightlimit);
 		AIAttackReady++;
 		//检测人物位置，移动屏幕
 		screenMove(kirito.getX(), kirito.getMovespd());
 
 		//静止敌人图片
-		if (enemy.stillJudge()){
-			stillput(enemy.getDir(), enemy.getX(), enemy.getY(), originx, &enemyplayer, 1); 
+		if (enemy.stillJudge() && !(enemy.getSkillState()) && !enemy.jumpJudge()){
+			enemy.setRunState(1);
+			enemy.setSkillType(0);
+			enemy.setRun(0);
+			ecomboclear++;
+			if (ecomboclear == 200){
+				ecomboclear = 0;
+				enemy.setCombo(0);
+			}
+			int t = enemy.getType();
+			stillput(enemy.getDir(), enemy.getX(), enemy.getY(), originx, &enemyplayer, t);   //静止角色图片
 		}
 
 		//当有键盘输入时执行
@@ -573,18 +699,15 @@ int  MAINFRAME::unlimitedMode()
 			if (KEY_DOWN('J') && (!kirito.coolingJudge()) && (!kirito.jumpJudge()) && (!kirito.runJudge())){
 				int ex = enemy.getX(), eh = enemy.getHp();		//好暴力的取值方法															//普通攻击"J"
 				kirito.meleeAttack(&ex, &eh, &enemy, &player, &enemyplayer, &skillpic250, &skillpic300, originx);
-				sound(2);
 			}
 
 			if (KEY_DOWN('K') && kirito.stillJudge() && (!kirito.coolingJudge())){
 				int ex = enemy.getX(), eh = enemy.getHp();																	//音速冲击"K"
 				kirito.sonicLeap(&ex, &eh, &enemy, &player, &enemyplayer, &skillpic250, &skillpic300, originx);
-				sound(2);
 			}
 			if (KEY_DOWN('L') && kirito.stillJudge() && (!kirito.coolingJudge())){
 				int ex = enemy.getX(), eh = enemy.getHp();																	//水平四方斩"L"
 				kirito.horizontalSquare(&ex, &eh, &enemy, &player, &enemyplayer, &skillpic250, &skillpic300, originx);
-				sound(2);
 			}
 			else if(kirito.getCombo()==0&&kirito.getSkillState()==0&&kirito.getSkillType()==0){
 				if (KEY_DOWN(VK_SPACE) && (!kirito.jumpJudge())){        //按Space跳跃
@@ -620,10 +743,22 @@ int  MAINFRAME::unlimitedMode()
 						mobRefresh = 100;
 						enemy.teleport(0, -200);
 					}
+					if (kirito.getX() <= 1750 && kirito.getX()>=1600&&room==1){
+						sceneChange(&kirito, 2, &background);
+						enemy.setHp(-1);
+						mobRefresh = 100;
+						enemy.teleport(0, -200);
+					}
+					if (kirito.getX() <= 550 && kirito.getX() >= 380&&room == -1){
+						sceneChange(&kirito, 3, &background);
+						enemy.setHp(-1);
+						mobRefresh = 100;
+						enemy.teleport(0, -200);
+					}
 				}
 				if (KEY_DOWN(VK_ESCAPE)){			//ESC退出
 					bgm(10);
-					closegraph();
+					break;
 				}
 				if (KEY_DOWN('R')){
 					kirito.respawn();
@@ -635,8 +770,8 @@ int  MAINFRAME::unlimitedMode()
 		if (kirito.jumpJudge()){    
 			kirito.jump();
 			switch (kirito.getDir()){
-			case 0:loadimage(&player, "pic/ll4.jpg"); break;
-			case 1:loadimage(&player, "pic/rr4.jpg"); break;
+			case 0:loadimage(&player, "pic/ll4.jpg",180,185,true); break;
+			case 1:loadimage(&player, "pic/rr4.jpg", 180, 185, true); break;
 			}
 			kirito.setCombo(0);
 			kirito.setSkillType(0);
@@ -646,23 +781,36 @@ int  MAINFRAME::unlimitedMode()
 		}
 		//若kirito处于跑动状态，进行跑步绘图
 		if (kirito.runJudge() && !kirito.jumpJudge() && !kirito.stillJudge()){
-			kirito.running(&player, originx);
+			kirito.running(&player, originx,&kirito);
+		}
+		if (enemy.runJudge() && !enemy.jumpJudge() && (enemy.getStill()>=-5)){
+			enemy.running(&enemyplayer, originx,&enemy);
 		}
 		//技能释放时的姿势和特效绘制
 		kirito.skillEffect(&skillpic250,&skillpic300,&player,&enemyplayer,&enemy,originx);
-	
 		//between
 		if (!kirito.stillJudge()){
 			kirito.setStill(kirito.getStill() + 1);
 			M_putimg(kirito.getX(), kirito.getY(), &player, WHITE, 100, originx);
 		}
+		//enemy between
 		if (!enemy.stillJudge()){
 			enemy.setStill(enemy.getStill() + 1);
-			M_putimg(enemy.getX(), enemy.getY(), &enemyplayer, WHITE, 100, originx);
+			if (enemy.getType()==10)
+				switch (enemy.getCombo()){
+				case 1:M_putimg(enemy.getX(), enemy.getY() - 425 + 185, &enemyplayer, WHITE, 100, originx); break;
+				case 2:M_putimg(enemy.getX(), enemy.getY() - 425 + 185, &enemyplayer, WHITE, 100, originx); break;
+				case 3:M_putimg(enemy.getX(), enemy.getY() - 510 + 185, &enemyplayer, WHITE, 100, originx); break;
+				case 4:M_putimg(enemy.getX(), enemy.getY() - 375 + 185, &enemyplayer, WHITE, 100, originx); break;
+			}
+				
+			else
+				M_putimg(enemy.getX(), enemy.getY(), &enemyplayer, WHITE, 100, originx);
 		}
 		//静止时的putimg
 		if (kirito.stillJudge() && !(kirito.getSkillState()) && !kirito.jumpJudge()){
 			kirito.setRunState(1);
+
 			kirito.setSkillType(0);
 			kirito.setRun(0);
 			comboclear++;
@@ -672,21 +820,71 @@ int  MAINFRAME::unlimitedMode()
 			}
 			stillput(kirito.getDir(),kirito.getX(),kirito.getY(),originx, &player,0);   //静止角色图片
 		}
-		
+		//死亡判定
+		if (kirito.getHp() <= 0){
+			kirito.setHp(0);
+			kirito.teleport(kirito.getX(), -200);
+			if (res==0)
+				deathtime++;
+			res++;
+			if (res == 500){
+				while (room > 1)
+					sceneChange(&kirito, 0, &background);
+				enemy.setHp(-1);
+				mobRefresh = 100;
+				enemy.teleport(0, -200);
+				kirito.teleport(300, 400);
+				kirito.respawn();
+				originx = 0;
+			}
+		}
+		if ((enemy.getHp() <= 0) && (mobRefresh == 0) && room != 1 && room != 0 && room != -1){
+			enemy.teleport(0, -200);
+			mobRefresh = 100;
+			switch (enemy.getType()){
+			case 1:										//普通怪死亡
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:{
+				kirito.expAdd(10 * enemy.getLev());
+				mobslaynum++;
+			}break;
+			case 10:{										//BOSS死亡
+				kirito.expAdd(100 * enemy.getLev());
+				for (int i = 0; i < 5; i++){
+					sceneChange(&kirito, 0, &background);
+				}
+				enemy.setHp(-1);
+				enemy.teleport(0, -200);
+				floor++;
+				mobslaynum++;
+				if (highfloor<floor)highfloor = floor;
+			}break;
+			}
+		}
 		//冷却时间减少
 		if (kirito.coolingJudge())
 			kirito.coolingDown();
 		if (kirito.getSkillState() > 0)
 			kirito.skillStateMove(); 
+		if (enemy.coolingJudge())
+			enemy.coolingDown();
+		if (enemy.getSkillState() > 0)
+			enemy.skillStateMove();
 
         FlushBatchDraw();      //绘制结果输出
 		Sleep(inter);          //控制帧率
-		//M_clear(pt, &background,background);    //清空画面
-		cleardevice();
+		cleardevice();			//清空画面
 
 	}//***************************************主循环结束*******************************************
-
+	
 	closegraph();
+	//welcomeInit();
 	
 }
 
@@ -730,7 +928,10 @@ void MAINFRAME::bgm(int song)
 		mciSendString(TEXT("open bgm/X.U..mp3 alias MySong"), NULL, 0, NULL);
 		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
 	}break;
-
+	case 11:{
+		mciSendString(TEXT("open bgm/Memory_Heart_Message.mp3 alias MySong"), NULL, 0, NULL);
+		mciSendString(TEXT("play MySong"), NULL, 0, NULL);
+	}break;
 	case 10:{
 		mciSendString(TEXT("close MySong"), NULL, 0, NULL);
 	}
@@ -738,6 +939,16 @@ void MAINFRAME::bgm(int song)
 		mciSendString(TEXT("stop MySong"), NULL, 0, NULL);
 	}
 	default:break;
+	}
+	else
+		switch (song){
+		case 10:{
+			mciSendString(TEXT("close MySong"), NULL, 0, NULL);
+		}
+		case 9:{
+			mciSendString(TEXT("stop MySong"), NULL, 0, NULL);
+		}
+		default:break;
 	}
 }
 
@@ -757,7 +968,21 @@ void MAINFRAME::sound(int soundtype)
 	case 3:{
 		PlaySound("sound/welcome.wav", NULL, SND_FILENAME | SND_ASYNC);
 	}break;
-	
+	case 4:{
+		PlaySound("sound/tele.wav", NULL, SND_FILENAME | SND_ASYNC);
+	}break;
+	case 5:{
+		PlaySound("sound/jump.wav", NULL, SND_FILENAME | SND_ASYNC);
+	}break;
+	case 6:{
+		PlaySound("sound/four.wav", NULL, SND_FILENAME | SND_ASYNC);
+	}break;
+	case 7:{
+		PlaySound("sound/res.wav", NULL, SND_FILENAME | SND_ASYNC);
+	}break;
+	case 8:{
+		PlaySound("sound/xiu.wav", NULL, SND_FILENAME | SND_ASYNC);
+	}break;
 	default:break;
 	}
 }
@@ -787,7 +1012,7 @@ void MAINFRAME::hpUI(int *hp, int *maxHp)
 	if (hp > 0){
 		M_putimg(75 - originx, 12, &hpTIAO, WHITE, 100, originx);
 		HPCAO_putimg(0 - originx, 0, &hpCAO, WHITE, 80, originx);
-		outtextxy(250-originx,30,hps);
+		outtextxy(250-originx,33,hps);
 	}
 }
 
@@ -798,25 +1023,31 @@ void MAINFRAME::otherUI(PLAYER* player)
 	char combo[10];
 	char skilltype[20];
 	char skillstate[20];
+	char runstate[20];
 	char level[30];
 	char exp[30];
 	char atk[30];
+	char x[20];
 	sprintf_s(movespd, "MOVESPD:%d", (*player).getMovespd());
 	sprintf_s(still, "STILL:%d", (*player).getStill());
 	sprintf_s(combo, "COMBO:%d", (*player).getCombo());
 	sprintf_s(skilltype, "SKILLTYPE:%d", (*player).getSkillType());
 	sprintf_s(skillstate, "SKILLSTATE:%d", (*player).getSkillState());
+	sprintf_s(runstate, "RUNSTATE:%d", (*player).getRunState());
 	sprintf_s(level, "LEVEL:%d", (*player).getLev());
 	sprintf_s(exp, "EXP:%d / %d", (*player).getExp(), 25*(*player).getLev()*(*player).getLev() + (*player).getLev() * 5 + 20);
 	sprintf_s(atk, "ATTACK:%d", (*player).getAttack());
+	sprintf_s(x, "X:%d", (*player).getX());
 	outtextxy(-originx, 50, movespd);
 	outtextxy(-originx, 90, still);
 	outtextxy(-originx, 130, combo);
 	outtextxy(-originx, 170, skilltype);
 	outtextxy(-originx, 210, skillstate);
+	outtextxy(-originx, 370, runstate);
 	outtextxy(-originx, 250, level);
 	outtextxy(-originx, 290, exp);
 	outtextxy(-originx, 330, atk);
+	outtextxy(-originx, 410, x);
 }
 
 void MAINFRAME::enemyHpUI(int *hp, int *maxHp,int *x,int *y)
@@ -835,6 +1066,24 @@ void MAINFRAME::enemyHpUI(int *hp, int *maxHp,int *x,int *y)
 	//图像输出
 	M_putimg(*x, *y-20, &hpTIAO, WHITE, 100, originx);
 	outtextxy(*x+180, *y - 20, hpNum);
+}
+
+void MAINFRAME::bossHpUI(int *hp, int *maxHp, int *x, int *y)
+{
+	IMAGE hpTIAO;
+	float hpRatio = (1.0*(*hp)) / (1.0*(*maxHp));
+	int hpPix = hpRatio * 180;
+	char hpNum[20];
+	sprintf_s(hpNum, "%d / %d", *hp, *maxHp);
+	if (hpRatio > 0.66)								//根据血量加载适应颜色的hpTIAO
+		loadimage(&hpTIAO, "pic/hp_enemy_green.jpg", hpPix, 24, true);
+	if (hpRatio > 0.33&&hpRatio <= 0.66)
+		loadimage(&hpTIAO, "pic/hp_enemy_yellow.jpg", hpPix, 24, true);
+	if (hpRatio <= 0.33)
+		loadimage(&hpTIAO, "pic/hp_enemy_red.jpg", hpPix, 24, true);
+	//图像输出
+	M_putimg(*x, *y - 260, &hpTIAO, WHITE, 100, originx);
+	outtextxy(*x + 180, *y - 260, hpNum);
 }
 
 void MAINFRAME::M_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, int tp, int originx)
@@ -942,5 +1191,5 @@ void MAINFRAME::HPCAO_putimg(int dstX, int dstY, IMAGE *pimg, int avoid_color, i
 			}
 		}
 	}
-	putimage(dstX, dstY, &tempimg);
+	putimage(dstX, dstY, &tempimg); 
 }

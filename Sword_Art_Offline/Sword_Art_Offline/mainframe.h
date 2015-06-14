@@ -16,20 +16,24 @@ public:					/*构造、析构函数*/
 	MAINFRAME();
 	~MAINFRAME();
 public:					/*功能*/
-	void welcomeInit();				 //初始化欢迎界面
+	bool welcomeInit();				 //初始化欢迎界面
 	//void saoMode();				 //SAO模式
-	int unlimitedMode();			 //无限模式
+	void unlimitedMode();			 //无限模式
 	void gameExit();				 //退出游戏
 	void bgm(int);					 //播放bgm
 	void sound(int);				 //播放音效
 	void setOriginx(int);			 //重设绘图原点
 	int getOriginx();				 //获取绘图原点
-	void sceneChange(PLAYER*, bool,IMAGE*); //场景转换
+	void sceneChange(PLAYER*, int,IMAGE*); //场景转换
 	void screenMove(int,int);		 //屏幕适应性移动
 	void hpUI(int*, int*);			 //kiritoのHPのUI
 	void otherUI(PLAYER*);					//其他的UI
-	void credit(IMAGE*,IMAGE*,IMAGE*,int*);				  	//制作人员
+	void achievement(PLAYER*);		//成就显示
+	void credit(IMAGE*,IMAGE*,IMAGE*,int*);		//制作人员
+	void roadBar(IMAGE*);						//路标
 	void enemyHpUI(int*, int*,int*,int*); //敌人のHP
+	void bossHpUI(int*, int*, int*, int*);//BOSSのHP
+	void loadOrNew();				//选择读档或者开始新游戏
 	void stillput(bool,int,int,int, IMAGE*,int);		 //静止时图片加载
 	static void M_putimg(int,int,IMAGE*,int,int,int);//绘制图片（背景透明&透明度可调）
 	static void HPCAO_putimg(int, int, IMAGE*, int, int, int);
@@ -37,6 +41,9 @@ public:					/*功能*/
 protected:
 	int originx;
 	int floor;
+	int highfloor;
+	int mobslaynum;
+	int deathtime;
 	int room;
 	int leftlimit;
 	int rightlimit;

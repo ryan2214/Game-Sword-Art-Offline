@@ -21,7 +21,7 @@ public:
 	void horizontalSquare(int*, int*, PLAYER*, IMAGE*, IMAGE*, IMAGE*, IMAGE*, int);//水平四方斩
 	void damage(int);       //受到伤害
 	void jump();		    //跳跃
-	void running(IMAGE*, int);         //跑动
+	void running(IMAGE*, int,PLAYER*);         //跑动
 	void moveX(int*,int*); //基本移(hua)动
 	void startJump();       //跳起
 	void useSkill(int);     //释放技能
@@ -41,7 +41,7 @@ public:
 	void skillStateMove();  //计算skillState
 	float getMaxHp();         //获取最大hp
 	void AIFind(int*);			//enemy追踪玩家
-	void AIAttack(PLAYER*);        //enemy攻击玩家
+	void AIAttack(PLAYER*,IMAGE*);        //enemy攻击玩家
 	int getLev();				//获取等级
 	void levelUp();				//升级啦hhhhh
 	void statRefresh();			//根据等级刷新数值
@@ -51,7 +51,9 @@ public:
 	void hpRege();				//被动HP回复
 	void respawn();				//复活，经验损失10%
 	int getType();				//获取种类
+	int getRun();				//获取run值
 	void bossAttack(int*, int*, PLAYER*, IMAGE*, IMAGE*, int);
+	bool getSound();
 	//初始化用函数
 	void teleport(int, int);//用于玩家传送
 	void setDir(bool);      //设置方向
@@ -68,6 +70,8 @@ public:
 	void setLevel(int);     //设置等级
 	void setExp(int);		//设置经验值
 	void setType(int);		//设置种类
+	void soundEffect(int);	//声效
+	void setSound(bool);
 	
 protected:		/****玩家属性****/
 	float hp;                 //当前生命值
@@ -92,6 +96,6 @@ protected:		/****玩家属性****/
 	bool isJump;            //跳跃
 	bool cooling;         //是否处于攻击状态
 	int type;				//0玩家；1-9普通敌人；10BOSS
-
+	bool SOUND;
 
 }kirito,enemy;
