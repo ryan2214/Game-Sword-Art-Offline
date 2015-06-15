@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "mainframe.h"
 #include "player.h"
 #include <graphics.h>
@@ -125,6 +126,43 @@ void MAINFRAME::stillput(bool dir,int x,int y,int ox, IMAGE *player,int t)
 	}
 }
 
+int MAINFRAME::fileRead()
+{
+	FILE *pf = NULL;   //文件指针  
+
+	int filelen = 0;
+	int i = 0;
+	char *buf=NULL;
+	pf = fopen("text/greet.txt", "r");   //以只读方式打开文件  
+	if (pf == NULL)
+	{
+		return 0;
+	}
+	else
+	{
+		//获得文件长度  
+
+		fseek(pf, 0, SEEK_END);   //文件指针移到末尾  
+		filelen = ftell(pf);   //获得文件当前指针位置，即为文件长度  
+		rewind(pf);   //将文件指针移到开头，准备读取  
+
+		buf = (char*)malloc(filelen + 1);    //新建缓冲区，存储独处的数据  
+		//将缓冲区的数据设置为0  
+		for (i = 0; i<filelen + 1; i++)
+			buf[i] = 0;
+
+		//读取文件  
+		fread(buf, filelen, 1, pf);
+		//关闭文件  
+		fclose(pf);
+		//buf中即为要读出的数据  
+
+		outtextxy(478,200,buf);    //输出一下数据，你可以随便怎么用  
+		free(buf);    //最后记得要释放  
+	}
+	return 1;
+}
+
 void MAINFRAME::copy_img(IMAGE* img1, IMAGE* img2)
 {
 	//copy img2 to img1
@@ -241,7 +279,7 @@ bool MAINFRAME::welcomeInit()
 			bgm(10);
 		    unlimitedMode();
 		}
-		if (KEY_DOWN('Q')){           //按Q键退出
+		if (KEY_DOWN(VK_ESCAPE)){           //按ESC键退出
 			bgm(10);
 			return true;
 			closegraph();
@@ -658,6 +696,7 @@ void  MAINFRAME::unlimitedMode()
 		//成就间
 		if (room == -1){
 			achievement(&kirito);
+			fileRead();
 		}
 		//升级判定
 		kirito.levelUpCheck();

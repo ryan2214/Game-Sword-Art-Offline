@@ -35,6 +35,7 @@ public:					/*功能*/
 	void bossHpUI(int*, int*, int*, int*);//BOSSのHP
 	void loadOrNew();				//选择读档或者开始新游戏
 	void stillput(bool,int,int,int, IMAGE*,int);		 //静止时图片加载
+	int fileRead();						//读取文件
 	static void M_putimg(int,int,IMAGE*,int,int,int);//绘制图片（背景透明&透明度可调）
 	static void HPCAO_putimg(int, int, IMAGE*, int, int, int);
 	static void copy_img(IMAGE*, IMAGE*);			//复制图片，机巧图片不会受伤
