@@ -600,7 +600,7 @@ void  MAINFRAME::unlimitedMode()
 		//路标
 		if (room == 1 && kirito.getX() <= rightlimit - 455 && kirito.getX() >= rightlimit - 575)
 			roadBar(&roadt);
-		//sound开关控制
+		//****sound开关控制****
 
 		//获取鼠标位置
 		GetCursorPos(&pt);
@@ -634,7 +634,7 @@ void  MAINFRAME::unlimitedMode()
 		if (flagstart==1)
 			M_putimg(1032 - originx, 10, &soundHover, WHITE, 80, originx);
 		M_putimg(1032 - originx, 10, &soundP, WHITE, 80, originx);
-		
+		//****sound开关控制结束****
 		//怪物刷新判定
 		if (mobRefresh > 0){
 			mobRefresh--;
