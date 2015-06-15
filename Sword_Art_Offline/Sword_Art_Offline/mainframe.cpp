@@ -156,8 +156,9 @@ int MAINFRAME::fileRead()
 		//关闭文件  
 		fclose(pf);
 		//buf中即为要读出的数据  
-
-		outtextxy(478,200,buf);    //输出一下数据，你可以随便怎么用  
+		settextstyle(60, 16, _T("SAO UI"));
+		outtextxy(478,200,buf);    //输出一下数据，你可以随便怎么用 
+		settextstyle(30, 8, _T("SAO UI"));
 		free(buf);    //最后记得要释放  
 	}
 	return 1;
@@ -509,7 +510,7 @@ void MAINFRAME::achievement(PLAYER *player)
 
 }
 
-void  MAINFRAME::unlimitedMode()
+void MAINFRAME::unlimitedMode()
 {
 	IMAGE background, wbackground, welcome, player, skillpic250, skillpic300, enemyplayer, hpUI,soundP,soundHover;
 	POINT pt;    //定义清理图像指针
@@ -685,7 +686,11 @@ void  MAINFRAME::unlimitedMode()
 		int khp = kirito.getHp(), kmhp = kirito.getMaxHp();
 		mainFrame::hpUI(&khp, &kmhp);
 		int ehp = enemy.getHp(), emhp = enemy.getMaxHp(), ex = enemy.getX(),ey=enemy.getY();
-		enemyHpUI(&ehp, &emhp, &ex,&ey);
+		switch (enemy.getType()){
+		case 9:enemyHpUI(&ehp, &emhp, &ex, &ey); break;
+		case 10:bossHpUI(&ehp, &emhp, &ex, &ey); break;
+		default:break;
+		}
 		//其他のUI
 		otherUI(&kirito);
 		if (room == 1){
@@ -1077,16 +1082,16 @@ void MAINFRAME::otherUI(PLAYER* player)
 	sprintf_s(exp, "EXP:%d / %d", (*player).getExp(), 25*(*player).getLev()*(*player).getLev() + (*player).getLev() * 5 + 20);
 	sprintf_s(atk, "ATTACK:%d", (*player).getAttack());
 	sprintf_s(x, "X:%d", (*player).getX());
-	outtextxy(-originx, 50, movespd);
-	outtextxy(-originx, 90, still);
-	outtextxy(-originx, 130, combo);
-	outtextxy(-originx, 170, skilltype);
-	outtextxy(-originx, 210, skillstate);
-	outtextxy(-originx, 370, runstate);
-	outtextxy(-originx, 250, level);
-	outtextxy(-originx, 290, exp);
-	outtextxy(-originx, 330, atk);
-	outtextxy(-originx, 410, x);
+	outtextxy(-originx, 50, level);
+	outtextxy(-originx, 90, exp);
+	outtextxy(-originx, 130, atk);
+	//outtextxy(-originx, 170, skilltype);
+	//outtextxy(-originx, 210, skillstate);
+	//outtextxy(-originx, 370, runstate);
+	//outtextxy(-originx, 250, movespd);
+	//outtextxy(-originx, 290, still);
+	//outtextxy(-originx, 330, combo);
+	//outtextxy(-originx, 410, x);
 }
 
 void MAINFRAME::enemyHpUI(int *hp, int *maxHp,int *x,int *y)

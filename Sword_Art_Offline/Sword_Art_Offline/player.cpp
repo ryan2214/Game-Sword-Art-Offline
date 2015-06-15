@@ -54,6 +54,7 @@ PLAYER::PLAYER()
 	level = INIT_LEVEL;
 	hpregen = INIT_HPRE;
 	type = 0;
+	SOUND = true;
 }
 
 PLAYER::~PLAYER() {}
