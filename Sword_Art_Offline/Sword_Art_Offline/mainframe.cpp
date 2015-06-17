@@ -522,7 +522,7 @@ void MAINFRAME::unlimitedMode()
 	MCIWndOpen(hwnd, "avi\\loadgame.wmv", NULL);
 	MCIWndPlay(hwnd);
 	Sleep(17000);
-	
+	fflush(stdin);
 	settextstyle(30, 8, _T("SAO UI"));       //初始化背景字体和字母颜色
 	settextcolor(BLACK);
 	setlinecolor(TRANSPARENT);

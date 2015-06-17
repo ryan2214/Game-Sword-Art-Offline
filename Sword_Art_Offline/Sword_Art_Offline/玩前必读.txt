@@ -9,6 +9,8 @@
 //
 //游戏按ESC退出
 //
+//本文件夹内的exe文件为release版
+//
 //text内的greet文档可自定义打招呼的内容
 
 //by Edmund.Lei

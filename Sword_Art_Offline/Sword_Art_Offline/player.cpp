@@ -271,6 +271,10 @@ void PLAYER::meleeAttack(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player
 				loadimage(enemyplayer, "pic/enemyrhit.jpg");                   //加载被击中时姿势
 				MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, originx); /****击中判断结束****/
 			}
+			if ((*enemy).getType() == 10){
+				loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+				MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, originx);
+			}
 		}
 
 		switch (combo){
@@ -305,6 +309,10 @@ void PLAYER::meleeAttack(int *enemyx, int *enemyhp, PLAYER *enemy, IMAGE *player
 			if ((*enemy).getType() == 9){
 				loadimage(enemyplayer, "pic/enemylhit.jpg");                   //加载被击中时姿势
 				MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, originx); /****击中判断结束****/
+			}
+			if ((*enemy).getType() == 10){
+				loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+				MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, originx);
 			}
 		}
 
@@ -526,6 +534,10 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, IMAGE *player, 
 						loadimage(enemyplayer, "pic/enemyrhit.jpg");                   //加载被击中时姿势
 						MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
 					}
+					if ((*enemy).getType() == 10){
+						loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+						MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, ox);
+					}
 				}
 				x += 340;
 			}break;
@@ -573,6 +585,10 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, IMAGE *player, 
 					if ((*enemy).getType() == 9){
 						loadimage(enemyplayer, "pic/enemylhit.jpg");                   //加载被击中时姿势
 						MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
+					}
+					if ((*enemy).getType() == 10){
+						loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+						MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, ox);
 					}
 				}
 
@@ -630,6 +646,10 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, IMAGE *player, 
 						loadimage(enemyplayer, "pic/enemyrhit.jpg");                   //加载被击中时姿势
 						MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
 					}
+					if ((*enemy).getType() == 10){
+						loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+						MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, ox);
+					}
 				}
 				loadimage(player, "pic/fourdash-3.jpg", 354, 185, true);
 				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
@@ -653,6 +673,10 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, IMAGE *player, 
 					if ((*enemy).getType() == 9){
 						loadimage(enemyplayer, "pic/enemylhit.jpg");                   //加载被击中时姿势
 						MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
+					}
+					if ((*enemy).getType() == 10){
+						loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+						MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, ox);
 					}
 				}
 				loadimage(player, "pic/fourdash-4.jpg", 354, 185, true);
@@ -680,6 +704,10 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, IMAGE *player, 
 						loadimage(enemyplayer, "pic/enemyrhit.jpg");                   //加载被击中时姿势
 						MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
 					}
+					if ((*enemy).getType() == 10){
+						loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+						MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, ox);
+					}
 				}
 				loadimage(player, "pic/fourdash-5.jpg", 354, 185, true);
 				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
@@ -705,6 +733,10 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, IMAGE *player, 
 					if ((*enemy).getType() == 9){
 						loadimage(enemyplayer, "pic/enemylhit.jpg");                   //加载被击中时姿势
 						MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
+					}
+					if ((*enemy).getType() == 10){
+						loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+						MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, ox);
 					}
 				}
 				loadimage(player, "pic/fourdash-6.jpg", 354, 185, true);
@@ -771,6 +803,10 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, IMAGE *player, 
 						loadimage(enemyplayer, "pic/enemylhit.jpg");                   //加载被击中时姿势
 						MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
 					}
+					if ((*enemy).getType() == 10){
+						loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+						MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, ox);
+					}
 				}
 				loadimage(player, "pic/rfourdash-3.jpg", 354, 185, true);
 				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
@@ -794,6 +830,10 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, IMAGE *player, 
 					if ((*enemy).getType() == 9){
 						loadimage(enemyplayer, "pic/enemyrhit.jpg");                   //加载被击中时姿势
 						MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
+					}
+					if ((*enemy).getType() == 10){
+						loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+						MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, ox);
 					}
 				}
 				loadimage(player, "pic/rfourdash-4.jpg", 354, 185, true);
@@ -821,6 +861,10 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, IMAGE *player, 
 						loadimage(enemyplayer, "pic/enemylhit.jpg");                   //加载被击中时姿势
 						MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
 					}
+					if ((*enemy).getType() == 10){
+						loadimage(enemyplayer, "pic/GEdie-1.jpg", 425, 425, true);                   //加载被击中时姿势
+						MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, ox);
+					}
 				}
 				loadimage(player, "pic/rfourdash-5.jpg", 354, 185, true);
 				MAINFRAME::M_putimg(x, y, player, WHITE, 100, ox);
@@ -846,6 +890,10 @@ void PLAYER::skillEffect(IMAGE *skillpic250, IMAGE *skillpic300, IMAGE *player, 
 					if ((*enemy).getType() == 9){
 						loadimage(enemyplayer, "pic/enemyrhit.jpg");                   //加载被击中时姿势
 						MAINFRAME::M_putimg((*enemy).x, (*enemy).y, enemyplayer, WHITE, 100, ox); /****击中判断结束****/
+					}
+					if ((*enemy).getType() == 10){
+						loadimage(enemyplayer, "pic/GEdie-1.jpg",425,425,true);                   //加载被击中时姿势
+						MAINFRAME::M_putimg((*enemy).x, (*enemy).y - 425 + 185, enemyplayer, WHITE, 100, ox);
 					}
 				}
 				loadimage(player, "pic/rfourdash-6.jpg", 354, 185, true);
